@@ -72,7 +72,7 @@ body {
 .xone-navbar {
     background-color: var(--bg-card);
     border-bottom: 1px solid var(--border-color);
-    padding: 16px 0; /* Augmenté de 12px à 16px pour laisser respirer le grand logo */
+    padding: 16px 0;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -95,7 +95,7 @@ body {
 
 /* Gestion de l'image du logo */
 .brand-logo {
-    height: 42px; /* Augmenté de 28px à 42px pour une meilleure visibilité */
+    height: 42px;
     width: auto;
     display: block;
     transition: filter 0.25s ease;
@@ -174,7 +174,7 @@ body {
    4. EN-TÊTE DE LA PAGE
    ========================================================================== */
 .header {
-    margin: 48px 0 24px 0; /* Augmenté de 36px à 48px pour équilibrer l'espace sous la navbar */
+    margin: 48px 0 24px 0;
     text-align: center;
 }
 
@@ -290,7 +290,12 @@ body {
 .filter-bar { display: flex; background: var(--bg-global); padding: 2px; border-radius: 6px; border: 1px solid var(--border-color); }
 .filter-btn { background: transparent; border: none; color: var(--text-muted); padding: 5px 10px; font-size: 11.5px; font-weight: 600; border-radius: 4px; cursor: pointer; transition: all 0.15s; }
 .filter-btn.active { background-color: var(--bg-card); color: var(--primary-color); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+/* Blocs génériques de composants */
 .component-block { margin-bottom: 20px; }
+
+/* LE HACK CSS DE MASQUAGE DU NOEUD SECONDAIRE A ÉTÉ SUPPRIMÉ PROPREMENT D'ICI */
+
 .component-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .component-info { display: flex; flex-direction: column; gap: 1px; }
 .component-name { font-size: 13.5px; font-weight: 600; }
