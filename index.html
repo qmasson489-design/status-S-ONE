@@ -9,12 +9,11 @@
 </head>
 <body class="light-mode">
 
-<!-- BARRE DE NAVIGATION -->
+<!-- BARRE DE NAVIGATION ÉPURÉE -->
 <nav class="xone-navbar">
     <div class="nav-container">
         <div class="xone-brand">S)ONE <span class="brand-divider">|</span> <span class="sub-brand">Status Hub</span></div>
         <div class="nav-right">
-            <!-- Bouton épuré sans émojis -->
             <button id="themeToggle" class="nav-btn theme-btn" aria-label="Changer de thème">
                 Mode Sombre / Clair
             </button>
@@ -42,37 +41,30 @@
         <span class="pulse-dot"></span> <span id="statusBannerText">Tous les systèmes S)ONE sont pleinement opérationnels</span>
     </div>
 
-    <!-- ALERTE DE CRISE -->
-    <div id="criticalIncidentAlert" class="critical-alert hidden">
-        <div class="alert-icon">⚠️</div>
-        <div class="alert-content">
-            <h3>Incident Majeur Proactif — Rupture critique des flux EDI</h3>
-            <p>L'instance S)ONE rencontre actuellement une interruption totale sur ses serveurs de bases de données. L'envoi et la réception des messages douaniers sont temporairement bloqués.</p>
-        </div>
-    </div>
-
     <!-- GRILLE TECHNIQUE PRINCIPALE -->
     <div class="grid-top">
 
-        <!-- GRAPHIQUE DOUBLE AXE : DISPONIBILITÉ & TEMPS DE RÉPONSE -->
+        <!-- DEUX GRAPHIQUES SÉPARÉS -->
         <div class="card large performance-card">
             <div class="card-header">
-                <span class="graph-title">Performances combinées (7 derniers jours)</span>
-                <span class="badge-uptime" id="slaBadge">SLA Garanti : 99.95%</span>
+                <span class="graph-title">Métriques de Performance Système</span>
+                <span class="badge-uptime">SLA Garanti : 99.95%</span>
             </div>
             
-            <div class="performance-body">
-                <div class="performance-status-wrapper">
-                    <div class="performance-text-group">
-                        <div class="performance-label">Statut Actuel</div>
-                        <div class="big" id="liveUptimeText">99.98%</div>
-                    </div>
+            <!-- Graphique 1 : Temps de Réponse Actuel -->
+            <div class="graph-wrapper">
+                <h3 class="chart-sub-title">Temps de réponse de l'instance (Temps réel)</h3>
+                <div class="chart-container" style="height: 160px; position: relative; margin-bottom: 30px;">
+                    <canvas id="latencyChart"></canvas>
                 </div>
             </div>
 
-            <!-- Conteneur agrandi pour accueillir le double graphique confortablement -->
-            <div class="chart-container" style="height: 240px;">
-                <canvas id="performanceChart"></canvas>
+            <!-- Graphique 2 : Disponibilité Septembre -->
+            <div class="graph-wrapper">
+                <h3 class="chart-sub-title">Historique de disponibilité — Mois de Septembre</h3>
+                <div class="chart-container" style="height: 160px; position: relative;">
+                    <canvas id="uptimeSeptemberChart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -143,108 +135,88 @@ const themeToggle = document.getElementById('themeToggle');
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
     document.body.classList.toggle('light-mode');
-    updateChartTheme();
+    updateChartsTheme();
 });
 
-/* 2. GENERATION DES LABELS DE TEMPS */
-function generateTimelineLabels() {
-    const labels = [];
-    const fullDates = [];
-    const now = new Date();
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(now.getDate() - i);
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        labels.push(`${day}/${month}`);
-        fullDates.push(`${day}/${month}/${d.getFullYear()}`);
-    }
-    return { labels, fullDates };
-}
-const timeData = generateTimelineLabels();
-
-/* 3. CONFIGURATION DU GRAPHIQUE MIXTE (DOUBLE AXE Y) */
-const ctx = document.getElementById('performanceChart').getContext('2d');
-let performanceChart = new Chart(ctx, {
-    type: 'bar', // Type par défaut pour l'arrière-plan (Temps de réponse)
+/* 2. CONFIGURATION DU GRAPHIQUE 1 : TEMPS DE RÉPONSE (Barres) */
+const ctxLatency = document.getElementById('latencyChart').getContext('2d');
+let latencyChart = new Chart(ctxLatency, {
+    type: 'bar',
     data: {
-        labels: timeData.labels,
-        datasets: [
-            {
-                type: 'line', // Superposition d'une ligne pour la disponibilité
-                label: 'Disponibilité S)ONE (%)',
-                data: [100, 100, 99.99, 99.96, 100, 100, 99.98],
-                borderColor: '#0066cc',
-                backgroundColor: 'transparent',
-                borderWidth: 3,
-                yAxisID: 'yUptime',
-                tension: 0.2,
-                pointRadius: 4,
-                order: 1
-            },
-            {
-                type: 'bar', // Barres pour le temps de réponse
-                label: 'Temps de réponse (ms)',
-                data: [124, 118, 245, 410, 132, 120, 115],
-                backgroundColor: 'rgba(56, 189, 248, 0.25)',
-                borderColor: 'rgba(56, 189, 248, 0.6)',
-                borderWidth: 1,
-                yAxisID: 'yLatency',
-                barThickness: 25,
-                order: 2
-            }
-        ]
+        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+        datasets: [{
+            label: 'Temps de réponse (ms)',
+            data: [124, 118, 245, 190, 132, 120, 115],
+            backgroundColor: 'rgba(56, 189, 248, 0.4)',
+            borderColor: 'rgba(56, 189, 248, 1)',
+            borderWidth: 1.5,
+            barThickness: 20
+        }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-                labels: { font: { family: 'Segoe UI', size: 11 } }
-            },
-            tooltip: {
-                mode: 'index',
-                intersect: false
-            }
-        },
+        plugins: { legend: { display: false } },
         scales: {
-            x: { 
-                grid: { display: false }
-            },
-            yUptime: {
-                type: 'linear',
-                position: 'left',
-                min: 99.5,
-                max: 100,
-                title: { display: true, text: 'Disponibilité (%)', font: { weight: 'bold' } },
-                ticks: { callback: value => value + '%' }
-            },
-            yLatency: {
-                type: 'linear',
-                position: 'right',
+            x: { grid: { display: false } },
+            y: {
                 min: 0,
-                max: 500,
-                title: { display: true, text: 'Temps de réponse (ms)', font: { weight: 'bold' } },
-                grid: { drawOnChartArea: false } // Évite l'entremêlement des lignes de grille
+                max: 400,
+                title: { display: true, text: 'ms', font: { size: 11, weight: 'bold' } }
             }
         }
     }
 });
 
-function updateChartTheme() {
+/* 3. CONFIGURATION DU GRAPHIQUE 2 : DISPONIBILITÉ SEPTEMBRE (Courbe) */
+const ctxUptime = document.getElementById('uptimeSeptemberChart').getContext('2d');
+let uptimeSeptemberChart = new Chart(ctxUptime, {
+    type: 'line',
+    data: {
+        // Découpage par semaines clés de Septembre
+        labels: ['01-07 Sept', '08-14 Sept', '15-21 Sept', '22-28 Sept', '29-30 Sept'],
+        datasets: [{
+            label: 'Uptime Global (%)',
+            data: [100, 99.98, 99.95, 99.99, 100],
+            borderColor: '#0066cc',
+            backgroundColor: 'transparent',
+            borderWidth: 2.5,
+            tension: 0.1,
+            pointRadius: 4,
+            pointBackgroundColor: '#0066cc'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { grid: { display: false } },
+            y: {
+                min: 99.4,
+                max: 100,
+                title: { display: true, text: '%', font: { size: 11, weight: 'bold' } },
+                ticks: { callback: value => value + '%' }
+            }
+        }
+    }
+});
+
+/* 4. METTRE À JOUR LE DESIGN DES DEUX GRAPHIQUES (Light/Dark mode) */
+function updateChartsTheme() {
     const isDark = document.body.classList.contains('dark-mode');
     const color = isDark ? '#94a3b8' : '#64748b';
-    performanceChart.options.scales.x.ticks.color = color;
-    performanceChart.options.scales.yUptime.ticks.color = color;
-    performanceChart.options.scales.yLatency.ticks.color = color;
-    performanceChart.options.plugins.legend.labels.color = color;
-    performanceChart.update();
+    
+    [latencyChart, uptimeSeptemberChart].forEach(chart => {
+        chart.options.scales.x.ticks.color = color;
+        chart.options.scales.y.ticks.color = color;
+        chart.options.scales.y.title.color = color;
+        chart.update();
+    });
 }
-updateChartTheme();
+updateChartsTheme();
 
-/* 4. CONSTRUIRE LES AUTRES ELEMENTS DE L'INTERFACE */
+/* 5. SECTIONS HISTORIQUES ET HEATMAPS ELEMENTS */
 function buildMiniUptimeLine(elementId) {
     const container = document.getElementById(elementId);
     for (let i = 0; i < 40; i++) {
