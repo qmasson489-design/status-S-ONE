@@ -1,4 +1,4 @@
-/* CSS ENHANCED — DESIGN SYSTEM PREMIUM S)ONE (OPTIONS A + B) */
+/* CSS — DESIGN SYSTEM S)ONE AVEC MODE SOMBRE */
 :root {
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
@@ -16,7 +16,6 @@
     --status-crit-text: #991b1b;
 }
 
-/* OVERRIDES VARIABLES POUR LE DARK MODE (OPTION B) */
 body.dark-mode {
     --bg-main: #0b1329;
     --bg-card: #1c2541;
@@ -45,7 +44,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* NAVBAR AVEC LES COMPOSANTS D'INTERACTION */
+/* NAVBAR */
 .xone-navbar {
     background-color: var(--navbar-bg);
     color: white;
@@ -74,29 +73,8 @@ body {
 body.light-mode .icon-moon { display: none; }
 body.dark-mode .icon-sun { display: none; }
 
-.subscribe-btn { background-color: #0066cc; color: white; box-shadow: 0 2px 6px rgba(0,102,204,0.3); }
-.subscribe-btn:hover { background-color: #0052a3; transform: translateY(-1px); }
-
 .nav-links a { color: #cbd5e1; text-decoration: none; font-size: 13.5px; margin-left: 10px; font-weight: 500; }
 .nav-links a.active, .nav-links a:hover { color: white; }
-
-/* MODAL STRUCTURE (OPTION A) */
-.modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;
-    opacity: 1; transition: all 0.25s ease;
-}
-.modal.hidden { display: none; opacity: 0; pointer-events: none; }
-.modal-content { background: var(--bg-card); padding: 26px; border-radius: 12px; max-width: 460px; width: 90%; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.modal-header h3 { margin: 0; font-size: 16px; color: var(--text-primary); }
-.close-btn { background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; }
-.modal-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px; }
-.modal-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 16px; }
-.modal-tab-btn { background: none; border: none; padding: 8px 16px; color: var(--text-muted); cursor: pointer; font-weight: 600; font-size: 13px; }
-.modal-tab-btn.active { color: var(--primary-blue); border-bottom: 2px solid var(--primary-blue); margin-bottom: -2px; }
-.modal-input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-primary); font-size: 13px; margin-bottom: 14px; }
-.modal-submit-btn { width: 100%; background: #0066cc; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; }
 
 /* CONTENEUR GLOBAL */
 .container { max-width: 1140px; margin: auto; padding: 35px 24px; }
@@ -127,7 +105,7 @@ body.dark-mode .icon-sun { display: none; }
 .section-desc { font-size: 12.5px; color: var(--text-secondary); margin: 4px 0 16px 0; }
 .section-spacing { margin-top: 25px; }
 
-/* COMMUTATEUR DE MÉTRIQUES (OPTION A) */
+/* COMMUTATEUR DE MÉTRIQUES */
 .metrics-switcher { display: flex; gap: 6px; background: var(--bg-main); padding: 4px; border-radius: 6px; }
 .metric-tab { background: none; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
 .metric-tab.active { background: var(--bg-card); color: var(--primary-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
@@ -137,11 +115,11 @@ body.dark-mode .icon-sun { display: none; }
 .performance-status-wrapper { display: flex; align-items: center; gap: 14px; }
 .performance-icon { font-size: 32px; }
 .performance-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
-.performance-card .big { font-size: 46px; font-weight: 800; tracking: -1px; margin: 0; line-height: 1; transition: color 0.3s; }
+.performance-card .big { font-size: 46px; font-weight: 800; margin: 0; line-height: 1; transition: color 0.3s; }
 .performance-description { font-size: 13px; color: var(--text-secondary); margin: 10px 0 0 0; line-height: 1.5; }
 .chart-container { height: 170px; position: relative; }
 
-/* MINI LINES D'UPTIME INDIVIDUELLES (OPTION A) */
+/* MINI LINES D'UPTIME */
 .component-block { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); }
 .component-block:last-of-type { border: none; margin-bottom: 0; padding-bottom: 0; }
 .component-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -162,7 +140,7 @@ body.dark-mode .icon-sun { display: none; }
 .cluster-summary-box.warning { background: var(--status-warn-bg); color: var(--status-warn-text); border: 1px dashed var(--border-color); }
 .cluster-summary-box.critical { background: var(--status-crit-bg); color: var(--status-crit-text); border: 1px dashed var(--border-color); }
 
-/* HEATMAP CONSISTANTE */
+/* HEATMAP */
 .heatmap-container { overflow-x: auto; padding: 4px 0; }
 .heatmap { display: flex; gap: 4px; }
 .cell { flex: 1; min-width: 24px; height: 28px; border-radius: 3px; cursor: pointer; }
