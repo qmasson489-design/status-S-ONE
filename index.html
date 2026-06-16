@@ -12,13 +12,11 @@
 <!-- BARRE DE NAVIGATION ÉPURÉE & MODERNE -->
 <nav class="xone-navbar">
     <div class="nav-container">
+        <!-- Logo intégré à la place du texte -->
         <div class="xone-brand">
-            <span class="logo-main">S)ONE</span>
-            <span class="brand-divider">/</span>
-            <span class="sub-brand">Status Hub</span>
+            <img src="téléchargement.png" alt="Logo S)ONE" class="brand-logo">
         </div>
         <div class="nav-right">
-            <!-- Bouton restauré avec l'ancien texte -->
             <button id="themeToggle" class="theme-minimal-btn" aria-label="Changer de thème">
                 Mode Sombre / Clair
             </button>
@@ -39,7 +37,7 @@
         <p class="timezone-indicator">🕒 Fuseau horaire : Europe/Paris (UTC+2)</p>
     </header>
 
-    <!-- BANNIÈRE DE STATUT LIVE (VERSION METICULEUSEMENT ÉPURÉE) -->
+    <!-- BANNIÈRE DE STATUT LIVE -->
     <div id="statusBanner" class="status status-ok">
         <div class="status-content">
             <div class="pulse-wrapper">
@@ -173,6 +171,12 @@
             <div class="heatmap" id="globalHeatmap"></div>
         </div>
     </div>
+
+    <!-- ZONE MENTIONS LÉGALES (SOGET) -->
+    <footer class="soget-footer">
+        <p>© 2026 SOGET. Tous droits réservés. S)ONE est une solution logicielle développée par SOGET.</p>
+        <p class="soget-sub-legal">Les informations de disponibilité et de performance affichées sur ce hub sont fournies à titre indicatif et issues de nos systèmes de monitoring interne.</p>
+    </footer>
 
 </div>
 
@@ -388,7 +392,6 @@ setInterval(() => {
     const node3 = document.getElementById('node3');
     const clusterBox = document.getElementById('clusterState');
 
-    // Reset nominal stable
     banner.className = "status status-ok";
     bannerText.innerText = "Tous les systèmes S)ONE sont pleinement opérationnels";
     node1.className = "status-pill ok"; node1.innerText = "Opérationnel";
@@ -402,7 +405,6 @@ setInterval(() => {
     let liveApiLatency = Math.floor(Math.random() * (160 - 135) + 135);
 
     if (rand > 0.85) {
-        // Incident API Douane
         banner.className = "status status-warning";
         bannerText.innerText = "Ralentissement détecté : Liaison API Douane instable";
         node3.className = "status-pill warning"; node3.innerText = "Dégradé";
@@ -414,7 +416,6 @@ setInterval(() => {
         liveUptime = 99.62;
         injectMiniFailure('node3Line');
     } else if (rand > 0.70 && rand <= 0.85) {
-        // Incident Noeud Secondaire
         banner.className = "status status-warning";
         bannerText.innerText = "Surcharge CPU temporaire détectée sur le nœud applicatif secondaire";
         node2.className = "status-pill warning"; node2.innerText = "Surcharge";
@@ -425,7 +426,6 @@ setInterval(() => {
         liveUptime = 99.78;
         injectMiniFailure('node2Line');
     } else {
-        // Stable
         if(Math.random() > 0.5) injectMiniSuccess('node1Line');
         if(Math.random() > 0.5) injectMiniSuccess('node2Line');
         if(Math.random() > 0.5) injectMiniSuccess('node3Line');
