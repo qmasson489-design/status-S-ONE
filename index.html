@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S)ONE - Dashboard de Performance</title>
+    <title>S)ONE - Dashboard de Statut Professionnel</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -11,9 +11,15 @@
 
 <nav class="xone-navbar">
     <div class="nav-container">
-        <div class="xone-brand">S)ONE <span class="brand-divider">|</span> <span class="sub-brand">Performance Hub</span></div>
+        <div class="xone-brand">S)ONE <span class="brand-divider">|</span> <span class="sub-brand">Status Hub</span></div>
         <div class="nav-right">
-            <button id="themeToggle" class="nav-btn theme-btn">Mode Sombre / Clair</button>
+            <button id="themeToggle" class="nav-btn theme-btn" aria-label="Changer de thème">
+                Mode Sombre / Clair
+            </button>
+            <div class="nav-links">
+                <a href="#" class="active">Disponibilité</a>
+                <a href="https://xone.fr/" target="_blank">Retour au Hub</a>
+            </div>
         </div>
     </div>
 </nav>
@@ -21,99 +27,210 @@
 <div class="container">
 
     <header class="header">
-        <h1>Métriques Système S)ONE</h1>
-        <p class="sub">Analyse de la disponibilité de Septembre et des temps de réponse de l'infrastructure.</p>
+        <div>
+            <h1>Status Opérationnel S)ONE</h1>
+            <p class="sub">Suivi technique en temps réel de l'infrastructure, des flux EDI et des interconnexions douanières.</p>
+            <p class="timezone-indicator">🕒 Fuseau horaire : Europe/Paris (UTC+2)</p>
+        </div>
     </header>
 
-    <!-- BARRE DE FILTRES AVEC ONGLETS -->
-    <div class="filter-bar">
-        <button class="filter-btn active" onclick="changeTimeframe('hour')">Dernières 24 Heures</button>
-        <button class="filter-btn" onclick="changeTimeframe('day')">7 Derniers Jours</button>
-        <button class="filter-btn" onclick="changeTimeframe('week')">Mois de Septembre (Semaines)</button>
+    <div id="statusBanner" class="status ok">
+        <span class="pulse-dot"></span> <span id="statusBannerText">Tous les systèmes S)ONE sont pleinement opérationnels</span>
     </div>
 
-    <!-- ZONE DES GRAPHIQUES SÉPARÉS -->
-    <div class="charts-grid">
-        
-        <!-- Graphique 1 : Temps de Réponse -->
-        <div class="card chart-card">
+    <div class="grid-top">
+
+        <div class="card large performance-card">
             <div class="card-header">
-                <h2>Temps de réponse de l'instance</h2>
-                <span class="m-badge">ms</span>
+                <span class="graph-title">Performances de l'infrastructure</span>
+                <div class="filter-bar">
+                    <button class="filter-btn active" onclick="changeTimeframe('hour')">Heure par heure</button>
+                    <button class="filter-btn" onclick="changeTimeframe('day')">Jour</button>
+                    <button class="filter-btn" onclick="changeTimeframe('week')">Semaine (Juin)</button>
+                </div>
             </div>
-            <div class="chart-container">
-                <canvas id="latencyChart"></canvas>
+            
+            <div class="graph-wrapper" style="margin-bottom: 25px;">
+                <h3 class="chart-sub-title">Temps de réponse de l'instance (ms)</h3>
+                <div class="chart-container" style="height: 150px; position: relative;">
+                    <canvas id="latencyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="graph-wrapper">
+                <h3 class="chart-sub-title">Disponibilité de l'instance (%)</h3>
+                <div class="chart-container" style="height: 150px; position: relative;">
+                    <canvas id="uptimeChart"></canvas>
+                </div>
             </div>
         </div>
 
-        <!-- Graphique 2 : Disponibilité -->
-        <div class="card chart-card">
-            <div class="card-header">
-                <h2>Disponibilité S)ONE</h2>
-                <span class="m-badge">%</span>
+        <div class="card components-card">
+            <h2>État des composants S)ONE</h2>
+            <p class="section-desc">Statut individuel et historique de disponibilité des nœuds applicatifs</p>
+            
+            <div class="component-block">
+                <div class="component-row">
+                    <div class="component-info">
+                        <span class="component-name">Nœud Principal (Node-01)</span>
+                    </div>
+                    <span id="node1" class="status-pill ok">Opérationnel</span>
+                </div>
+                <div class="mini-uptime-line" id="node1Line"></div>
             </div>
-            <div class="chart-container">
-                <canvas id="uptimeChart"></canvas>
+
+            <div class="component-block">
+                <div class="component-row">
+                    <div class="component-info">
+                        <span class="component-name">Nœud Redondant (Node-02)</span>
+                    </div>
+                    <span id="node2" class="status-pill ok">Opérationnel</span>
+                </div>
+                <div class="mini-uptime-line" id="node2Line"></div>
+            </div>
+
+            <div class="component-block">
+                <div class="component-row">
+                    <div class="component-info">
+                        <span class="component-name">Passerelle Douane (API Delta)</span>
+                    </div>
+                    <span id="node3" class="status-pill ok">Opérationnel</span>
+                </div>
+                <div class="mini-uptime-line" id="node3Line"></div>
+            </div>
+
+            <div id="clusterState" class="cluster-summary-box ok">
+                Système résilient (3/3 services actifs)
             </div>
         </div>
 
     </div>
+
+    <div class="card section-spacing">
+        <div class="card-header">
+            <h2>Indice d'Uptime quotidien (30 derniers jours)</h2>
+            <div class="heatmap-legend">
+                <span>Indisponibilité</span>
+                <span class="legend-box color-red"></span>
+                <span class="legend-box color-yellow"></span>
+                <span class="legend-box color-green"></span>
+                <span>Opérationnel</span>
+            </div>
+        </div>
+        <div class="heatmap-container">
+            <div class="heatmap" id="globalHeatmap"></div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-/* 1. JEU DE DONNÉES CLAIRS (Heure, Jour, Semaine) */
+/* 1. GESTION DU MODE SOMBRE / CLAIR */
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('light-mode');
+    updateChartsTheme();
+});
+
+/* 2. GENERATION DYNAMIQUE DES HORAIRES ET JOURS ACTUELS */
+function generateDynamicLabels() {
+    const hours = [];
+    const days = [];
+    
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    // Génère un historique heure par heure sur les 12 dernières heures (ex: 03:00, 04:00, ..., 14:00)
+    for (let i = 11; i >= 0; i--) {
+        let h = (currentHour - i + 24) % 24;
+        hours.push(`${String(h).padStart(2, '0')}:00`);
+    }
+
+    // Génère les 7 derniers jours glissants se terminant par aujourd'hui
+    const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    for (let i = 6; i >= 0; i--) {
+        let d = new Date();
+        d.setDate(now.getDate() - i);
+        days.push(dayNames[d.getDay()]);
+    }
+
+    return { hours, days };
+}
+
+const dynamicLabels = generateDynamicLabels();
+
+/* JEU DE DONNÉES TEMPORELLES RECALIBRÉ SUR JUIN */
 const datasets = {
     hour: {
-        labels: ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '00:00', '02:00', '04:00', '06:00', '08:00'],
-        latency: [120, 145, 130, 260, 185, 110, 95, 105, 90, 95, 115, 122],
-        uptime: [100, 100, 100, 99.8, 100, 100, 100, 100, 100, 100, 100, 100],
-        uptimeMin: 99.5
+        labels: dynamicLabels.hours,
+        latency: [98, 102, 115, 90, 95, 110, 145, 130, 210, 185, 118, 105],
+        uptime: [100, 100, 100, 100, 100, 100, 100, 100, 99.8, 100, 100, 100],
+        uptimeMin: 99.5,
+        latencyMin: 0,
+        latencyMax: 300
     },
     day: {
-        labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-        latency: [124, 118, 245, 190, 132, 120, 115],
-        uptime: [100, 100, 99.92, 99.97, 100, 100, 99.98],
-        uptimeMin: 99.0
+        labels: dynamicLabels.days,
+        latency: [132, 120, 115, 124, 118, 245, 122],
+        uptime: [100, 100, 99.98, 100, 100, 99.92, 100],
+        uptimeMin: 99.0,
+        latencyMin: 0,
+        latencyMax: 300
     },
     week: {
-        labels: ['Semaine 36', 'Semaine 37', 'Semaine 38', 'Semaine 39', 'Semaine 40 (Fin Sept)'],
-        latency: [135, 142, 188, 122, 119],
-        uptime: [100, 99.98, 99.95, 99.99, 100],
-        uptimeMin: 99.0
+        labels: ['01-07 Juin', '08-14 Juin', '15-21 Juin', '22-28 Juin', '29-30 Juin'],
+        latency: [122, 135, 142, 119, 125],
+        uptime: [100, 99.99, 99.95, 100, 100],
+        uptimeMin: 99.0,
+        latencyMin: 0,
+        latencyMax: 300
     }
 };
 
-/* 2. INITIALISATION DES GRAPHIQUES */
+/* 3. CONFIGURATION INITIALE DES GRAPHES EN LIGNES PARFAITEMENT IDENTIQUES */
 const ctxLatency = document.getElementById('latencyChart').getContext('2d');
 const ctxUptime = document.getElementById('uptimeChart').getContext('2d');
 
-const chartOptions = {
+const baseOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
         x: { grid: { display: false } },
-        y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
+        y: { grid: { color: 'rgba(0, 0, 0, 0.04)' } }
     }
 };
 
-// Graphique des barres (Latency)
+// Graphe 1 : Ligne Temps de Réponse (ms)
 let latencyChart = new Chart(ctxLatency, {
-    type: 'bar',
+    type: 'line',
     data: {
         labels: datasets.hour.labels,
         datasets: [{
             data: datasets.hour.latency,
-            backgroundColor: '#38bdf8',
-            borderRadius: 4,
-            barThickness: 'flex',
-            maxBarThickness: 30
+            borderColor: '#0066cc',
+            borderWidth: 2.5,
+            pointRadius: 2.5,
+            pointBackgroundColor: '#0066cc',
+            backgroundColor: 'transparent',
+            tension: 0.1
         }]
     },
-    options: chartOptions
+    options: {
+        ...baseOptions,
+        scales: {
+            x: { grid: { display: false } },
+            y: {
+                min: datasets.hour.latencyMin,
+                max: datasets.hour.latencyMax,
+                grid: { color: 'rgba(0, 0, 0, 0.04)' }
+            }
+        }
+    }
 });
 
-// Graphique des lignes (Uptime)
+// Graphe 2 : Ligne Uptime (%)
 let uptimeChart = new Chart(ctxUptime, {
     type: 'line',
     data: {
@@ -121,37 +238,39 @@ let uptimeChart = new Chart(ctxUptime, {
         datasets: [{
             data: datasets.hour.uptime,
             borderColor: '#0066cc',
-            borderWidth: 3,
-            pointRadius: 3,
+            borderWidth: 2.5,
+            pointRadius: 2.5,
             pointBackgroundColor: '#0066cc',
-            tension: 0.1,
-            fill: false
+            backgroundColor: 'transparent',
+            tension: 0.1
         }]
     },
     options: {
-        ...chartOptions,
+        ...baseOptions,
         scales: {
             x: { grid: { display: false } },
-            y: { 
-                min: datasets.hour.uptimeMin, 
+            y: {
+                min: datasets.hour.uptimeMin,
                 max: 100,
                 ticks: { callback: v => v + '%' },
-                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                grid: { color: 'rgba(0, 0, 0, 0.04)' }
             }
         }
     }
 });
 
-/* 3. FONCTION DE CHANGEMENT DYNAMIQUE */
+/* 4. PASSAGE DYNAMIQUE HEURE / JOUR / SEMAINE */
 function changeTimeframe(timeframe) {
-    // Mises à jour des états des boutons
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
 
-    // Injection des données
+    // Mise à jour Graphe Latence
     latencyChart.data.labels = datasets[timeframe].labels;
     latencyChart.data.datasets[0].data = datasets[timeframe].latency;
+    latencyChart.options.scales.y.min = datasets[timeframe].latencyMin;
+    latencyChart.options.scales.y.max = datasets[timeframe].latencyMax;
     
+    // Mise à jour Graphe Uptime
     uptimeChart.data.labels = datasets[timeframe].labels;
     uptimeChart.data.datasets[0].data = datasets[timeframe].uptime;
     uptimeChart.options.scales.y.min = datasets[timeframe].uptimeMin;
@@ -160,22 +279,44 @@ function changeTimeframe(timeframe) {
     uptimeChart.update();
 }
 
-/* 4. MODE SOMBRE & CLAIR */
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    document.body.classList.toggle('light-mode');
+function updateChartsTheme() {
     const isDark = document.body.classList.contains('dark-mode');
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-    const textColor = isDark ? '#94a3b8' : '#64748b';
-
+    const color = isDark ? '#94a3b8' : '#64748b';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)';
+    const strokeColor = isDark ? '#38bdf8' : '#0066cc';
+    
     [latencyChart, uptimeChart].forEach(chart => {
-        chart.options.scales.x.ticks.color = textColor;
-        chart.options.scales.y.ticks.color = textColor;
+        chart.options.scales.x.ticks.color = color;
+        chart.options.scales.y.ticks.color = color;
         chart.options.scales.y.grid.color = gridColor;
+        chart.data.datasets[0].borderColor = strokeColor;
+        chart.data.datasets[0].pointBackgroundColor = strokeColor;
         chart.update();
     });
-});
+}
+updateChartsTheme();
+
+/* 5. SECTIONS HISTORIQUES MINI-LINES & HEATMAP */
+function buildMiniUptimeLine(elementId) {
+    const container = document.getElementById(elementId);
+    for (let i = 0; i < 40; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'segment green';
+        if (Math.random() > 0.97) segment.className = 'segment yellow';
+        container.appendChild(segment);
+    }
+}
+buildMiniUptimeLine('node1Line');
+buildMiniUptimeLine('node2Line');
+buildMiniUptimeLine('node3Line');
+
+const globalHeatmap = document.getElementById("globalHeatmap");
+for (let i = 29; i >= 0; i--) {
+    const cell = document.createElement("div");
+    cell.className = "cell green";
+    if (Math.random() > 0.95) cell.className = "cell yellow";
+    globalHeatmap.appendChild(cell);
+}
 </script>
 </body>
 </html>
