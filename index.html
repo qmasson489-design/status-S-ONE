@@ -3,50 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S)ONE - Status Dashboard</title>
+    <title>S)ONE - Dashboard de Statut Professionnel</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="light-mode">
 
+<!-- BARRE DE NAVIGATION ENHANCED AVEC TOGGLE DARK MODE & ABONNEMENT -->
 <nav class="xone-navbar">
     <div class="nav-container">
-        <div class="xone-brand">S)ONE <span class="brand-divider">|</span> <span class="sub-brand">Status</span></div>
-        <div class="nav-links">
-            <a href="#" class="active">Disponibilité</a>
-            <a href="https://xone.fr/" target="_blank">Retour au Hub</a>
+        <div class="xone-brand">S)ONE <span class="brand-divider">|</span> <span class="sub-brand">Status Hub</span></div>
+        <div class="nav-right">
+            <button id="themeToggle" class="nav-btn theme-btn" aria-label="Changer de thème">
+                <span class="icon-sun">☀️</span><span class="icon-moon">🌙</span>
+            </button>
+            <button id="subscribeBtn" class="nav-btn subscribe-btn">S'abonner aux alertes</button>
+            <div class="nav-links">
+                <a href="#" class="active">Disponibilité</a>
+                <a href="https://xone.fr/" target="_blank">Retour au Hub</a>
+            </div>
         </div>
     </div>
 </nav>
 
+<!-- MODAL D'ABONNEMENT (OPTION A) -->
+<div id="subscribeModal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>S'abonner aux notifications d'incident</h3>
+            <button id="closeModal" class="close-btn">&times;</button>
+        </div>
+        <p class="modal-desc">Recevez des alertes en temps réel par e-mail ou webhook dès qu'une perturbation est détectée sur l'instance S)ONE.</p>
+        <div class="modal-tabs">
+            <button class="modal-tab-btn active" data-tab="email">E-mail</button>
+            <button class="modal-tab-btn" data-tab="webhook">Webhook</button>
+        </div>
+        <div class="modal-tab-content" id="tab-email">
+            <input type="email" placeholder="votre.email@entreprise.com" class="modal-input">
+            <button class="modal-submit-btn">S'abonner via E-mail</button>
+        </div>
+        <div class="modal-tab-content hidden" id="tab-webhook">
+            <input type="url" placeholder="https://api.votreentreprise.com/webhook" class="modal-input">
+            <button class="modal-submit-btn">Configurer le Webhook</button>
+        </div>
+    </div>
+</div>
+
 <div class="container">
 
+    <!-- EN-TÊTE SIMPLIFIÉ ET ÉPURÉ -->
     <header class="header">
         <div>
-            <h1>Status S)ONE</h1>
-            <p class="sub">Suivi opérationnel en temps réel de votre instance de flux douaniers et logistiques</p>
+            <h1>Status Opérationnel S)ONE</h1>
+            <p class="sub">Suivi technique en temps réel de l'infrastructure, des flux EDI et des interconnexions douanières.</p>
+            <p class="timezone-indicator">🕒 Fuseau horaire : Europe/Paris (UTC+2)</p>
         </div>
     </header>
 
+    <!-- BANNIÈRE DE STATUT LIVE AVEC TRANSITION FLUIDE -->
     <div id="statusBanner" class="status ok">
-        <span class="pulse-dot"></span> <span id="statusBannerText">Tous les systèmes S)ONE sont opérationnels</span>
+        <span class="pulse-dot"></span> <span id="statusBannerText">Tous les systèmes S)ONE sont pleinement opérationnels</span>
     </div>
 
+    <!-- ALERTE DE CRISE DISPOSITIF DOUBLE KO -->
     <div id="criticalIncidentAlert" class="critical-alert hidden">
         <div class="alert-icon">⚠️</div>
         <div class="alert-content">
-            <h3>Incident Majeur Proactif — Rupture des flux EDI</h3>
+            <h3>Incident Majeur Proactif — Rupture critique des flux EDI</h3>
             <p>L'instance S)ONE rencontre actuellement une interruption totale sur ses serveurs de bases de données. L'envoi et la réception des messages douaniers (manifestes, déclarations, mainlevées) sont temporairement bloqués au port de commerce. Nos équipes de production sont pleinement mobilisées.</p>
             <div class="alert-meta">Impact : Global | Cible : Communautés Logistiques & Échanges Douanes</div>
         </div>
     </div>
 
+    <!-- GRILLE TECHNIQUE PRINCIPALE AVEC COMMUTATEUR DE MÉTRIQUES (OPTION A + B) -->
     <div class="grid-top">
 
+        <!-- MODULE PERFORMANCE ENHANCED AVEC ONGLETS DE MÉTRIQUES -->
         <div class="card large performance-card">
             <div class="card-header">
-                <h2>Taux de disponibilité global</h2>
-                <span class="badge-uptime">SLA Garanti : 99.95%</span>
+                <div class="metrics-switcher">
+                    <button class="metric-tab active" data-metric="uptime">Uptime Global</button>
+                    <button class="metric-tab" data-metric="latency">Temps de réponse</button>
+                    <button class="metric-tab" data-metric="edi">Volume EDI</button>
+                </div>
+                <span class="badge-uptime" id="slaBadge">SLA Garanti : 99.95%</span>
             </div>
             
             <div class="performance-body">
@@ -60,41 +100,63 @@
                 <p class="performance-description" id="statusDesc">Excellentes conditions de disponibilité. L'ensemble des files d'attente EDI sont traitées de manière nominale.</p>
             </div>
 
-            <div class="chart">
-                <canvas id="uptimeChart"></canvas>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
             </div>
         </div>
 
-        <div class="card">
-            <h2>Composants de l'infrastructure S)ONE</h2>
-            <p class="section-desc">État de disponibilité individuel des nœuds applicatifs</p>
+        <!-- COMPOSANTS CLUSTER INFRASTRUCTURE AVEC MINI LINES D'UPTIME INDIVIDUELLES (OPTION A) -->
+        <div class="card components-card">
+            <h2>État des composants S)ONE</h2>
+            <p class="section-desc">Statut individuel et historique de disponibilité des nœuds applicatifs</p>
             
-            <div class="component-row">
-                <div class="component-info">
-                    <span class="component-name">Nœud Principal (Node-01)</span>
-                    <span class="component-meta">Traitement des injections EDI</span>
+            <!-- Composant 1 -->
+            <div class="component-block">
+                <div class="component-row">
+                    <div class="component-info">
+                        <span class="component-name">Nœud Principal (Node-01)</span>
+                        <span class="component-meta">Injections et routage EDI</span>
+                    </div>
+                    <span id="node1" class="status-pill ok">Opérationnel</span>
                 </div>
-                <span id="node1" class="status-pill ok">Opérationnel</span>
+                <div class="mini-uptime-line" id="node1Line"></div>
             </div>
 
-            <div class="component-row">
-                <div class="component-info">
-                    <span class="component-name">Nœud Redondant (Node-02)</span>
-                    <span class="component-meta">Haute disponibilité & Réplication synchrone</span>
+            <!-- Composant 2 -->
+            <div class="component-block">
+                <div class="component-row">
+                    <div class="component-info">
+                        <span class="component-name">Nœud Redondant (Node-02)</span>
+                        <span class="component-meta">Haute disponibilité & Réplication synchrone</span>
+                    </div>
+                    <span id="node2" class="status-pill ok">Opérationnel</span>
                 </div>
-                <span id="node2" class="status-pill ok">Opérationnel</span>
+                <div class="mini-uptime-line" id="node2Line"></div>
+            </div>
+
+            <!-- Composant 3 (Nouveau) -->
+            <div class="component-block">
+                <div class="component-row">
+                    <div class="component-info">
+                        <span class="component-name">Passerelle Douane (API Delta)</span>
+                        <span class="component-meta">Interconnexion DGDDI & AP+</span>
+                    </div>
+                    <span id="node3" class="status-pill ok">Opérationnel</span>
+                </div>
+                <div class="mini-uptime-line" id="node3Line"></div>
             </div>
 
             <div id="clusterState" class="cluster-summary-box ok">
-                Système résilient (2/2 serveurs actifs)
+                Système résilient (3/3 services actifs)
             </div>
         </div>
 
     </div>
 
+    <!-- HEATMAP TECHNIQUE GLOBALE 30 JOURS -->
     <div class="card section-spacing">
         <div class="card-header">
-            <h2>Indice d'Uptime quotidien (30 derniers jours)</h2>
+            <h2>Indice d'Uptime quotidien consolidé (30 derniers jours)</h2>
             <div class="heatmap-legend">
                 <span>Indisponibilité</span>
                 <span class="legend-box color-red"></span>
@@ -105,7 +167,7 @@
         </div>
         
         <div class="heatmap-container">
-            <div class="heatmap" id="githubHeatmap"></div>
+            <div class="heatmap" id="globalHeatmap"></div>
         </div>
         <div class="heatmap-footer">
             <span>Il y a 30 jours</span>
@@ -113,11 +175,13 @@
         </div>
     </div>
 
+    <!-- REGISTER DES INCIDENTS CHRONOLOGIQUES -->
     <div class="card section-spacing">
         <h2>Historique de l'instance & Suivi des incidents</h2>
-        <p class="section-desc">Registre transparent des événements techniques identifiés</p>
+        <p class="section-desc">Registre transparent des événements et maintenances planifiées</p>
         
         <div class="timeline">
+            <!-- INJECTION EN TEMPS RÉEL DES ALERTES SIMULÉES -->
             <div class="timeline-day" id="liveIncidentSection">
                 <div class="timeline-date">Aujourd'hui</div>
                 <div class="timeline-events" id="liveEventsContainer">
@@ -125,6 +189,7 @@
                 </div>
             </div>
 
+            <!-- INCIDENT PASSÉ TRACÉ S)ONE -->
             <div class="timeline-day">
                 <div class="timeline-date">11 Juin 2026</div>
                 <div class="timeline-events">
@@ -132,18 +197,18 @@
                         <div class="event-header">
                             <span class="event-badge warning">Résolu</span>
                             <span class="event-title">Latence réseau sur les interfaces de douane Delta-E / AP+</span>
-                            <span class="event-time">10:15 - 11:40 UTC</span>
+                            <span class="event-time">10:15 - 11:40 UTC+2</span>
                         </div>
                         <div class="incident-updates">
                             <div class="update-block">
                                 <span class="update-status">Résolu</span>
                                 <p class="update-text">Le lien d'interconnexion réseau avec le guichet de l'administration des douanes a été rétabli. La file d'attente des messages EDI en souffrance a été entièrement traitée et acquittée.</p>
-                                <span class="update-time">11:40 UTC</span>
+                                <span class="update-time">11:40 UTC+2</span>
                             </div>
                             <div class="update-block">
                                 <span class="update-status">En cours d'investigation</span>
                                 <p class="update-text">Une déconnexion partielle perturbe la transmission automatique. Le trafic applicatif S)ONE est forcé vers les routes réseau secondaires de secours.</p>
-                                <span class="update-time">10:30 UTC</span>
+                                <span class="update-time">10:30 UTC+2</span>
                             </div>
                         </div>
                     </div>
@@ -155,108 +220,189 @@
 </div>
 
 <script>
-/* GENERATION DYNAMIQUE DES BALISES DE TEMPS POUR LE GRAPHIQUE */
+/* 1. GESTION DU MODE SOMBRE / CLAIR (OPTION B) */
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('light-mode');
+    updateChartTheme();
+});
+
+/* 2. GESTION DU MODAL D'ABONNEMENT (OPTION A) */
+const subscribeBtn = document.getElementById('subscribeBtn');
+const subscribeModal = document.getElementById('subscribeModal');
+const closeModal = document.getElementById('closeModal');
+const modalTabs = document.querySelectorAll('.modal-tab-btn');
+
+subscribeBtn.addEventListener('click', () => subscribeModal.classList.remove('hidden'));
+closeModal.addEventListener('click', () => subscribeModal.classList.add('hidden'));
+window.addEventListener('click', (e) => { if(e.target === subscribeModal) subscribeModal.classList.add('hidden'); });
+
+modalTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        modalTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById(`tab-${tab.dataset.tab}`).classList.remove('hidden');
+    });
+});
+
+/* 3. GENERATION DES LABELS DU GRAPHIQUE */
 function generateTimelineLabels() {
     const labels = [];
     const fullDates = [];
     const now = new Date();
-    
     for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(now.getDate() - i);
-        
         const day = String(d.getDate()).padStart(2, '0');
         const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = d.getFullYear();
-        
         if (i === 0) {
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            labels.push(`${day}/${month} (${hours}:${minutes})`);
+            labels.push(`${day}/${month} (${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')})`);
         } else {
             labels.push(`${day}/${month}`);
         }
-        
-        fullDates.push(`${day}/${month}/${year} à ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`);
+        fullDates.push(`${day}/${month}/${d.getFullYear()}`);
     }
     return { labels, fullDates };
 }
-
 const timeData = generateTimelineLabels();
 
-/* 1. CONFIGURATION CHART.JS */
-const ctx = document.getElementById('uptimeChart').getContext('2d');
-new Chart(ctx, {
+/* 4. CONFIGURATION MULTI-MÉTRIQUES DE CHART.JS (OPTION A & B) */
+const metricsData = {
+    uptime: {
+        data: [100, 100, 99.99, 99.96, 100, 100, 100],
+        label: 'Disponibilité (%)',
+        min: 99.6, max: 100, suffix: '%'
+    },
+    latency: {
+        data: [124, 118, 245, 410, 132, 120, 115],
+        label: 'Temps de réponse (ms)',
+        min: 0, max: 500, suffix: ' ms'
+    },
+    edi: {
+        data: [4200, 4800, 3100, 1200, 5100, 5400, 5600],
+        label: 'Messages EDI / min',
+        min: 0, max: 6000, suffix: ' msg'
+    }
+};
+
+let currentMetric = 'uptime';
+const ctx = document.getElementById('performanceChart').getContext('2d');
+let performanceChart = new Chart(ctx, {
     type: 'line',
     data: {
         labels: timeData.labels,
         datasets: [{
-            data: [100, 100, 99.99, 99.96, 100, 100, 100],
+            data: metricsData[currentMetric].data,
             borderColor: '#0066cc',
             backgroundColor: 'rgba(0, 102, 204, 0.04)',
             fill: true,
             tension: 0.35,
-            pointRadius: 4,
+            pointRadius: 5,
             pointBackgroundColor: '#0066cc'
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { 
+        plugins: {
             legend: { display: false },
             tooltip: {
                 callbacks: {
-                    title: function(context) {
-                        return `Date : ${timeData.fullDates[context[0].dataIndex]}`;
-                    },
-                    label: function(context) {
-                        return ` Disponibilité : ${context.parsed.y}%`;
-                    }
+                    title: (context) => `Date : ${timeData.fullDates[context[0].dataIndex]}`,
+                    label: (context) => ` ${metricsData[currentMetric].label} : ${context.parsed.y}${metricsData[currentMetric].suffix}`
                 }
             }
         },
         scales: {
-            x: { 
-                grid: { display: false }, 
-                ticks: { 
-                    color: '#64748b', 
-                    font: { family: 'Segoe UI', size: 11 }
-                } 
-            },
-            y: { min: 99.6, max: 100, ticks: { color: '#64748b' } }
+            x: { grid: { display: false }, ticks: { font: { family: 'Segoe UI', size: 11 } } },
+            y: { min: metricsData[currentMetric].min, max: metricsData[currentMetric].max }
         }
     }
 });
 
-/* 2. LOGIQUE GÉNÉRATION HEATMAP */
-const heatmap = document.getElementById("githubHeatmap");
+// Switcher de métriques
+document.querySelectorAll('.metric-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.metric-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentMetric = tab.dataset.metric;
+        
+        // MàJ Chart
+        performanceChart.data.datasets[0].data = metricsData[currentMetric].data;
+        performanceChart.options.scales.y.min = metricsData[currentMetric].min;
+        performanceChart.options.scales.y.max = metricsData[currentMetric].max;
+        performanceChart.update();
+        
+        // MàJ des indicateurs à côté du graphe
+        const badge = document.getElementById('slaBadge');
+        if(currentMetric === 'uptime') {
+            badge.innerText = "SLA Garanti : 99.95%";
+        } else if(currentMetric === 'latency') {
+            badge.innerText = "Cible Globale : < 150ms";
+        } else {
+            badge.innerText = "Capacité Max : 10k/min";
+        }
+    });
+});
+
+function updateChartTheme() {
+    const isDark = document.body.classList.contains('dark-mode');
+    const color = isDark ? '#94a3b8' : '#64748b';
+    performanceChart.options.scales.x.ticks.color = color;
+    performanceChart.options.scales.y.ticks.color = color;
+    performanceChart.update();
+}
+updateChartTheme();
+
+/* 5. GENERATION DES HEATMAPS ET MINI LINES D'UPTIME INDIVIDUELLES (OPTION A) */
+function buildMiniUptimeLine(elementId) {
+    const container = document.getElementById(elementId);
+    for (let i = 0; i < 40; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'segment green';
+        if (Math.random() > 0.98) {
+            segment.className = 'segment red';
+        } else if (Math.random() > 0.95) {
+            segment.className = 'segment yellow';
+        }
+        container.appendChild(segment);
+    }
+}
+buildMiniUptimeLine('node1Line');
+buildMiniUptimeLine('node2Line');
+buildMiniUptimeLine('node3Line');
+
+// Global Heatmap
+const globalHeatmap = document.getElementById("globalHeatmap");
 for (let i = 29; i >= 0; i--) {
     const currentCellDate = new Date();
     currentCellDate.setDate(new Date().getDate() - i);
     const r = Math.random();
     let state = "green";
     let uptime = (100 - (r * 0.04)).toFixed(2);
-    
-    if (r > 0.95) { state = "red"; uptime = (97.40).toFixed(2); } 
-    else if (r > 0.88) { state = "yellow"; uptime = (99.12).toFixed(2); }
+    if (r > 0.96) { state = "red"; uptime = (97.40).toFixed(2); } 
+    else if (r > 0.90) { state = "yellow"; uptime = (99.12).toFixed(2); }
 
     const cell = document.createElement("div");
     cell.className = `cell ${state}`;
     cell.setAttribute("title", `${currentCellDate.toLocaleDateString('fr-FR')} : ${uptime}% Uptime`);
-    heatmap.appendChild(cell);
+    globalHeatmap.appendChild(cell);
 }
 
-/* 3. SIMULATEUR LIVE INFRASTRUCTURE */
+/* 6. SIMULATEUR DYNAMIQUE AVEC TRANSITIONS CSS ET EFFETS LIVE */
 function liveSystemSimulation() {
     const seed = Math.random();
-    let node1 = true, node2 = true;
+    let n1 = true, n2 = true, n3 = true;
     
-    if (seed > 0.95) { node1 = false; node2 = false; } 
-    else if (seed > 0.80) { if (Math.random() > 0.5) node1 = false; else node2 = false; } 
+    if (seed > 0.96) { n1 = false; n2 = false; n3 = false; } 
+    else if (seed > 0.85) { n3 = false; }
+    else if (seed > 0.75) { n2 = false; }
 
-    const n1 = document.getElementById("node1");
-    const n2 = document.getElementById("node2");
+    const elN1 = document.getElementById("node1");
+    const elN2 = document.getElementById("node2");
+    const elN3 = document.getElementById("node3");
     const clusterBox = document.getElementById("clusterState");
     const banner = document.getElementById("statusBanner");
     const bannerText = document.getElementById("statusBannerText");
@@ -268,89 +414,81 @@ function liveSystemSimulation() {
     const statusLabel = document.getElementById("statusLabel");
     const statusDesc = document.getElementById("statusDesc");
 
-    n1.className = node1 ? "status-pill ok" : "status-pill ko";
-    n1.innerText = node1 ? "Opérationnel" : "Indisponible";
-    n2.className = node2 ? "status-pill ok" : "status-pill ko";
-    n2.innerText = node2 ? "Opérationnel" : "Indisponible";
+    elN1.className = n1 ? "status-pill ok" : "status-pill ko"; elN1.innerText = n1 ? "Opérationnel" : "Indisponible";
+    elN2.className = n2 ? "status-pill ok" : "status-pill ko"; elN2.innerText = n2 ? "Opérationnel" : "Indisponible";
+    elN3.className = n3 ? "status-pill ok" : "status-pill ko"; elN3.innerText = n3 ? "Opérationnel" : "Indisponible";
 
-    if (!node1 && !node2) {
+    if (!n1 && !n2 && !n3) {
         banner.className = "status critical";
-        bannerText.innerText = "Interruption critique du service S)ONE";
+        bannerText.innerText = "Interruption critique générale de l'instance S)ONE";
         clusterBox.className = "cluster-summary-box critical";
-        clusterBox.innerText = "ALERTE : Perte complète de redondance de l'infrastructure";
+        clusterBox.innerText = "ALERTE : Perte complète de redondance et rupture de liaison";
         criticalAlert.classList.remove("hidden");
         
-        liveUptime.innerText = "92.40%";
-        liveUptime.style.color = "#e74c3c";
-        statusIcon.innerText = "🚨";
-        statusLabel.innerText = "Interruption Critique";
-        statusLabel.style.color = "#e74c3c";
-        statusDesc.innerText = "Interruption critique des systèmes. Les serveurs de bases de données applicatifs S)ONE ne répondent plus aux injections de manifestes.";
+        if (currentMetric === 'uptime') { liveUptime.innerText = "92.40%"; liveUptime.style.color = "#e74c3c"; }
+        statusIcon.innerText = "🚨"; statusLabel.innerText = "Interruption Critique"; statusLabel.style.color = "#e74c3c";
+        statusDesc.innerText = "Interruption globale. Les serveurs de routage et de bases de données de flux S)ONE subissent un incident de coupure réseau global.";
         
         liveEvents.innerHTML = `
             <div class="timeline-event critical">
                 <div class="event-header">
                     <span class="event-badge critical">Identifié</span>
-                    <span class="event-title">Coupure complète des liaisons d'infrastructure S)ONE</span>
+                    <span class="event-title">Coupure complète de l'infrastructure S)ONE</span>
                     <span class="event-time">En cours</span>
                 </div>
                 <div class="incident-updates">
                     <div class="update-block">
-                        <span class="update-status critical">Équipes mobilisées</span>
-                        <p class="update-text">Rupture généralisée de la connectivité. Les processus d'injection automatique et le Hub S)ONE subissent des échecs critiques. Nous forçons l'allumage manuel sur l'infrastructure secondaire.</p>
+                        <span class="update-status critical">Équipes en cours d'intervention</span>
+                        <p class="update-text">Rupture généralisée de connectivité sur le cluster principal. Les injections automatiques subissent des échecs critiques. Rallumage manuel planifié sur les commutateurs réseau redondés.</p>
                         <span class="update-time">À l'instant</span>
                     </div>
                 </div>
             </div>`;
-    } else if (!node1 || !node2) {
+    } else if (!n1 || !n2 || !n3) {
         banner.className = "status warning";
-        bannerText.innerText = "Lenteurs et dégradations partielles détectées";
+        bannerText.innerText = "Performances de flux dégradées sur l'infrastructure";
         clusterBox.className = "cluster-summary-box warning";
-        clusterBox.innerText = "Incident mineur : Fonctionnement assuré sur un seul nœud actif";
+        clusterBox.innerText = "Incident mineur : Charge redistribuée sur les nœuds actifs";
         criticalAlert.classList.add("hidden");
 
-        liveUptime.innerText = "99.82%";
-        liveUptime.style.color = "#f39c12";
-        statusIcon.innerText = "⚠️";
-        statusLabel.innerText = "Flux Perturbé";
-        statusLabel.style.color = "#f39c12";
-        statusDesc.innerText = "Légères perturbations de charge constatées. Le trafic utilisateur bascule de manière transparente sur le second nœud opérationnel.";
+        if (currentMetric === 'uptime') { liveUptime.innerText = "99.15%"; liveUptime.style.color = "#f39c12"; }
+        statusIcon.innerText = "⚠️"; statusLabel.innerText = "Flux Perturbé"; statusLabel.style.color = "#f39c12";
+        statusDesc.innerText = "Des ralentissements sur l'intégration des fichiers d'escales maritimes sont identifiés. Le trafic bascule de manière sécurisée.";
 
-        const failNode = !node1 ? "Principal (Node-01)" : "Redondant (Node-02)";
+        let serviceEnPanne = !n3 ? "Passerelle Douane (API Delta)" : "Nœud Redondant (Node-02)";
         liveEvents.innerHTML = `
             <div class="timeline-event warning">
                 <div class="event-header">
-                    <span class="event-badge warning">Investigation</span>
-                    <span class="event-title">Incident isolé sur le Nœud ${failNode}</span>
+                    <span class="event-badge warning">Analyse</span>
+                    <span class="event-title">Ralentissement partiel sur le service : ${serviceEnPanne}</span>
                     <span class="event-time">En cours</span>
                 </div>
                 <div class="incident-updates">
                     <div class="update-block">
-                        <span class="update-status warning">Analyse en cours</span>
-                        <p class="update-text">Le serveur subit un pic de requêtes suite à l'intégration simultanée de fichiers lourds d'escales maritimes. Le trafic utilisateur reste sécurisé.</p>
-                        <span class="update-time">Il y a 2 min</span>
+                        <span class="update-status warning">Investigation</span>
+                        <p class="update-text">L'élément ciblé subit un pic d'appels simultanés suite à des renvois automatiques de manifestes en attente. Aucun message n'est perdu.</p>
+                        <span class="update-time">Il y a 3 min</span>
                     </div>
                 </div>
             </div>`;
     } else {
         banner.className = "status ok";
-        bannerText.innerText = "Tous les systèmes S)ONE sont opérationnels";
+        bannerText.innerText = "Tous les systèmes S)ONE sont pleinement opérationnels";
         clusterBox.className = "cluster-summary-box ok";
-        clusterBox.innerText = "Système résilient (2/2 serveurs actifs)";
+        clusterBox.innerText = "Système hautement résilient (3/3 services actifs)";
         criticalAlert.classList.add("hidden");
 
-        liveUptime.innerText = "99.98%"
-        liveUptime.style.color = "#2ecc71";
-        statusIcon.innerText = "📈";
-        statusLabel.innerText = "État Nominal";
-        statusLabel.style.color = "#2ecc71";
-        statusDesc.innerText = "Excellentes conditions de disponibilité. L'ensemble des files d'attente EDI sont traitées de manière nominale.";
+        if (currentMetric === 'uptime') { liveUptime.innerText = "99.98%"; liveUptime.style.color = "#2ecc71"; }
+        else if (currentMetric === 'latency') { liveUptime.innerText = "115 ms"; liveUptime.style.color = "#2ecc71"; }
+        else { liveUptime.innerText = "5,600 /m"; liveUptime.style.color = "#2ecc71"; }
         
+        statusIcon.innerText = "📈"; statusLabel.innerText = "État Nominal"; statusLabel.style.color = "#2ecc71";
+        statusDesc.innerText = "Excellentes conditions opérationnelles. Les files d'attente douanières et logistiques s'exécutent de façon nominale.";
         liveEvents.innerHTML = `<div class="no-incidents">🟢 Aucun incident signalé sur ce créneau.</div>`;
     }
 }
 
-setInterval(liveSystemSimulation, 5000);
+setInterval(liveSystemSimulation, 4500);
 liveSystemSimulation();
 </script>
 </body>
