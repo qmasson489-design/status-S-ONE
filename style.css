@@ -1,4 +1,4 @@
-/* CSS — DESIGN SYSTEM S)ONE AVEC MODE SOMBRE TECHNIQUE */
+/* CSS — DESIGN SYSTEM S)ONE ENTIÈREMENT NETTOYÉ */
 :root {
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
@@ -65,7 +65,7 @@ body {
 
 .nav-right { display: flex; align-items: center; gap: 16px; }
 
-/* BOUTON DE THÈME INTERFACE SANS ÉMOJIS */
+/* BOUTON DE THÈME NETTOYÉ SANS ICONES */
 .theme-btn { 
     background: rgba(255,255,255,0.1); 
     border: 1px solid rgba(255,255,255,0.2); 
@@ -75,7 +75,7 @@ body {
     font-weight: 600; 
     border-radius: 4px; 
     cursor: pointer; 
-    transition: background 0.2s ease, border-color 0.2s ease; 
+    transition: background 0.2s ease; 
 }
 .theme-btn:hover { background: rgba(255,255,255,0.2); }
 
@@ -92,14 +92,9 @@ body {
 /* BANNIÈRE STATUT LIVE */
 .status { padding: 16px 20px; border-radius: 8px; margin-bottom: 25px; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--border-color); }
 .status.ok { background-color: var(--status-ok-bg); color: var(--status-ok-text); }
-.status.warning { background-color: var(--status-warn-bg); color: var(--status-warn-text); }
-.status.critical { background-color: var(--status-crit-bg); color: var(--status-crit-text); }
 
 .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background-color: currentColor; animation: livePulse 1.5s infinite; }
 @keyframes livePulse { 0%, 100% { opacity: 0.5; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.2); } }
-
-.critical-alert { background: #e74c3c; color: white; border-radius: 8px; padding: 20px; margin-bottom: 25px; display: flex; gap: 20px; box-shadow: 0 10px 20px rgba(231,76,60,0.15); }
-.critical-alert.hidden { display: none !important; }
 
 /* ARCHITECTURE GRILLE */
 .grid-top { display: grid; grid-template-columns: 1.6fr 1.4fr; gap: 25px; }
@@ -108,18 +103,15 @@ body {
 .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 24px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: background-color 0.4s ease, border-color 0.4s ease; }
 .card h2 { font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
-.graph-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+
+.graph-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.chart-sub-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin: 0 0 8px 0; }
 .section-desc { font-size: 12.5px; color: var(--text-secondary); margin: 4px 0 16px 0; }
 .section-spacing { margin-top: 25px; }
 
 .badge-uptime { background: var(--bg-main); color: var(--text-secondary); font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 4px; border: 1px solid var(--border-color); }
 
-.performance-body { margin-bottom: 16px; }
-.performance-status-wrapper { display: flex; align-items: center; gap: 14px; }
-.performance-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
-.performance-card .big { font-size: 46px; font-weight: 800; margin: 0; line-height: 1; transition: color 0.3s; color: #2ecc71; }
-
-/* BLOCKS ET MINI LINES POUR COMPOSANTS */
+/* BLOCKS ET MINI LINES */
 .component-block { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); }
 .component-block:last-of-type { border: none; margin-bottom: 0; padding-bottom: 0; }
 .component-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -135,7 +127,7 @@ body {
 .cluster-summary-box { padding: 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-align: center; margin-top: 10px; }
 .cluster-summary-box.ok { background: var(--bg-main); color: var(--text-secondary); border: 1px dashed var(--border-color); }
 
-/* STRUCTURE DU CONTENEUR HEATMAP */
+/* HEATMAP STRUCT */
 .heatmap-container { overflow-x: auto; padding: 4px 0; }
 .heatmap { display: flex; gap: 4px; }
 .cell { flex: 1; min-width: 24px; height: 28px; border-radius: 3px; }
@@ -146,4 +138,3 @@ body {
 .legend-box { width: 12px; height: 12px; border-radius: 2px; }
 .legend-box.color-green { background: #2ecc71; }
 .legend-box.color-yellow { background: #f1c40f; }
-.legend-box.color-red { background: #e74c3c; }
