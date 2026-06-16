@@ -1,4 +1,4 @@
-/* CSS — DESIGN SYSTEM S)ONE AVEC MODE SOMBRE */
+/* CSS — DESIGN SYSTEM S)ONE AVEC MODE SOMBRE TECHNIQUE */
 :root {
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
@@ -64,14 +64,20 @@ body {
 .sub-brand { font-weight: 400; font-size: 14px; color: #cbd5e1; }
 
 .nav-right { display: flex; align-items: center; gap: 16px; }
-.nav-btn {
-    border: none; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s ease;
+
+/* BOUTON DE THÈME INTERFACE SANS ÉMOJIS */
+.theme-btn { 
+    background: rgba(255,255,255,0.1); 
+    border: 1px solid rgba(255,255,255,0.2); 
+    color: white; 
+    padding: 8px 14px; 
+    font-size: 12px; 
+    font-weight: 600; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    transition: background 0.2s ease, border-color 0.2s ease; 
 }
-.theme-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white; display: flex; align-items: center; }
 .theme-btn:hover { background: rgba(255,255,255,0.2); }
-body.light-mode .icon-moon { display: none; }
-body.dark-mode .icon-sun { display: none; }
 
 .nav-links a { color: #cbd5e1; text-decoration: none; font-size: 13.5px; margin-left: 10px; font-weight: 500; }
 .nav-links a.active, .nav-links a:hover { color: white; }
@@ -83,8 +89,8 @@ body.dark-mode .icon-sun { display: none; }
 .header .sub { margin: 0; color: var(--text-secondary); font-size: 14px; }
 .timezone-indicator { font-size: 12px; color: var(--text-muted); margin: 6px 0 0 0; font-weight: 500; }
 
-/* STATUT LIVE */
-.status { padding: 16px 20px; border-radius: 8px; margin-bottom: 25px; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--border-color); transition: all 0.3s ease; }
+/* BANNIÈRE STATUT LIVE */
+.status { padding: 16px 20px; border-radius: 8px; margin-bottom: 25px; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--border-color); }
 .status.ok { background-color: var(--status-ok-bg); color: var(--status-ok-text); }
 .status.warning { background-color: var(--status-warn-bg); color: var(--status-warn-text); }
 .status.critical { background-color: var(--status-crit-bg); color: var(--status-crit-text); }
@@ -95,80 +101,49 @@ body.dark-mode .icon-sun { display: none; }
 .critical-alert { background: #e74c3c; color: white; border-radius: 8px; padding: 20px; margin-bottom: 25px; display: flex; gap: 20px; box-shadow: 0 10px 20px rgba(231,76,60,0.15); }
 .critical-alert.hidden { display: none !important; }
 
-/* STRUCTURE DU DASHBOARD */
+/* ARCHITECTURE GRILLE */
 .grid-top { display: grid; grid-template-columns: 1.6fr 1.4fr; gap: 25px; }
 @media (max-width: 850px) { .grid-top { grid-template-columns: 1fr; } }
 
 .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 24px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: background-color 0.4s ease, border-color 0.4s ease; }
 .card h2 { font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+.graph-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
 .section-desc { font-size: 12.5px; color: var(--text-secondary); margin: 4px 0 16px 0; }
 .section-spacing { margin-top: 25px; }
 
-/* COMMUTATEUR DE MÉTRIQUES */
-.metrics-switcher { display: flex; gap: 6px; background: var(--bg-main); padding: 4px; border-radius: 6px; }
-.metric-tab { background: none; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
-.metric-tab.active { background: var(--bg-card); color: var(--primary-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
 .badge-uptime { background: var(--bg-main); color: var(--text-secondary); font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 4px; border: 1px solid var(--border-color); }
 
 .performance-body { margin-bottom: 16px; }
 .performance-status-wrapper { display: flex; align-items: center; gap: 14px; }
-.performance-icon { font-size: 32px; }
 .performance-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
-.performance-card .big { font-size: 46px; font-weight: 800; margin: 0; line-height: 1; transition: color 0.3s; }
-.performance-description { font-size: 13px; color: var(--text-secondary); margin: 10px 0 0 0; line-height: 1.5; }
-.chart-container { height: 170px; position: relative; }
+.performance-card .big { font-size: 46px; font-weight: 800; margin: 0; line-height: 1; transition: color 0.3s; color: #2ecc71; }
 
-/* MINI LINES D'UPTIME */
+/* BLOCKS ET MINI LINES POUR COMPOSANTS */
 .component-block { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); }
 .component-block:last-of-type { border: none; margin-bottom: 0; padding-bottom: 0; }
 .component-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .component-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-.component-meta { font-size: 11px; color: var(--text-muted); display: block; }
 .status-pill { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
 .status-pill.ok { background: rgba(46,204,113,0.15); color: #27ae60; }
-.status-pill.ko { background: rgba(231,76,60,0.15); color: #c0392b; }
 
 .mini-uptime-line { display: flex; gap: 2px; height: 8px; width: 100%; margin-top: 6px; }
 .mini-uptime-line .segment { flex: 1; height: 100%; border-radius: 1px; }
 .mini-uptime-line .segment.green { background-color: #2ecc71; opacity: 0.85; }
 .mini-uptime-line .segment.yellow { background-color: #f1c40f; }
-.mini-uptime-line .segment.red { background-color: #e74c3c; }
 
 .cluster-summary-box { padding: 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-align: center; margin-top: 10px; }
 .cluster-summary-box.ok { background: var(--bg-main); color: var(--text-secondary); border: 1px dashed var(--border-color); }
-.cluster-summary-box.warning { background: var(--status-warn-bg); color: var(--status-warn-text); border: 1px dashed var(--border-color); }
-.cluster-summary-box.critical { background: var(--status-crit-bg); color: var(--status-crit-text); border: 1px dashed var(--border-color); }
 
-/* HEATMAP */
+/* STRUCTURE DU CONTENEUR HEATMAP */
 .heatmap-container { overflow-x: auto; padding: 4px 0; }
 .heatmap { display: flex; gap: 4px; }
-.cell { flex: 1; min-width: 24px; height: 28px; border-radius: 3px; cursor: pointer; }
+.cell { flex: 1; min-width: 24px; height: 28px; border-radius: 3px; }
 .cell.green { background-color: #2ecc71; }
 .cell.yellow { background-color: #f1c40f; }
-.cell.red { background-color: #e74c3c; }
+
 .heatmap-legend { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
 .legend-box { width: 12px; height: 12px; border-radius: 2px; }
 .legend-box.color-green { background: #2ecc71; }
 .legend-box.color-yellow { background: #f1c40f; }
 .legend-box.color-red { background: #e74c3c; }
-.heatmap-footer { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-muted); margin-top: 8px; }
-
-/* TIMELINE */
-.timeline { display: flex; flex-direction: column; gap: 20px; }
-.timeline-day { display: grid; grid-template-columns: 130px 1fr; gap: 20px; }
-@media (max-width: 600px) { .timeline-day { grid-template-columns: 1fr; gap: 8px; } }
-.timeline-date { font-weight: 700; color: var(--text-primary); font-size: 13.5px; }
-.no-incidents { color: var(--text-muted); font-size: 13px; }
-.timeline-event { border-left: 3px solid var(--border-color); padding-left: 14px; }
-.timeline-event.warning { border-left-color: #f39c12; }
-.timeline-event.critical { border-left-color: #e74c3c; }
-.event-header { margin-bottom: 10px; }
-.event-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; margin-right: 6px; }
-.event-badge.warning { background: var(--status-warn-bg); color: var(--status-warn-text); }
-.event-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-.event-time { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-.update-block { background: var(--bg-main); border-radius: 6px; padding: 12px; border: 1px solid var(--border-color); margin-top: 8px; }
-.update-status { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
-.update-text { font-size: 13px; color: var(--text-secondary); margin: 4px 0; line-height: 1.5; }
-.update-time { font-size: 11px; color: var(--text-muted); }
