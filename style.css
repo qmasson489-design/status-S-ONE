@@ -67,12 +67,12 @@ body {
 }
 
 /* ==========================================================================
-   3. BARRE DE NAVIGATION MODERNE
+   3. BARRE DE NAVIGATION AVEC LOGO IMAGE (AGRANDI)
    ========================================================================== */
 .xone-navbar {
     background-color: var(--bg-card);
     border-bottom: 1px solid var(--border-color);
-    padding: 12px 0;
+    padding: 16px 0; /* Augmenté de 12px à 16px pour laisser respirer le grand logo */
     position: sticky;
     top: 0;
     z-index: 100;
@@ -91,26 +91,19 @@ body {
 .xone-brand {
     display: flex;
     align-items: center;
-    gap: 8px;
 }
 
-.logo-main {
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: -0.5px;
-    color: var(--text-main);
+/* Gestion de l'image du logo */
+.brand-logo {
+    height: 42px; /* Augmenté de 28px à 42px pour une meilleure visibilité */
+    width: auto;
+    display: block;
+    transition: filter 0.25s ease;
 }
 
-.brand-divider {
-    color: var(--border-color);
-    font-weight: 300;
-    font-size: 14px;
-}
-
-.sub-brand {
-    color: var(--text-muted);
-    font-size: 13px;
-    font-weight: 500;
+/* Léger ajustement de contraste pour le mode sombre si nécessaire */
+.dark-mode .brand-logo {
+    filter: brightness(0.95) contrast(1.1);
 }
 
 .nav-right {
@@ -181,7 +174,7 @@ body {
    4. EN-TÊTE DE LA PAGE
    ========================================================================== */
 .header {
-    margin: 36px 0 24px 0;
+    margin: 48px 0 24px 0; /* Augmenté de 36px à 48px pour équilibrer l'espace sous la navbar */
     text-align: center;
 }
 
@@ -279,7 +272,7 @@ body {
 }
 
 /* ==========================================================================
-   6. RESTE DU DASHBOARD (COMPOSANTS & CHART-JS LABELS)
+   6. COMPOSANTS, GRAPHES & HEATMAP
    ========================================================================== */
 .grid-top { display: grid; grid-template-columns: 1.55fr 1.25fr; gap: 24px; align-items: start; }
 @media (max-width: 960px) { .grid-top { grid-template-columns: 1fr; } }
@@ -327,3 +320,31 @@ body {
 .legend-box.color-green { background-color: #10b981; }
 .legend-box.color-yellow { background-color: #f59e0b; }
 .legend-box.color-red { background-color: #ef4444; }
+
+/* ==========================================================================
+   7. MENTIONS LÉGALES SOGET (FOOTER)
+   ========================================================================== */
+.soget-footer {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.soget-footer p {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.soget-footer .soget-sub-legal {
+    font-size: 11px;
+    font-weight: 400;
+    max-width: 700px;
+    margin: 0 auto;
+    opacity: 0.75;
+    line-height: 1.4;
+}
