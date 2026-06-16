@@ -3,240 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S)ONE - Dashboard de Statut Professionnel</title>
+    <title>S)ONE - Dashboard de Performance</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="light-mode">
 
-<!-- BARRE DE NAVIGATION ÉPURÉE -->
 <nav class="xone-navbar">
     <div class="nav-container">
-        <div class="xone-brand">S)ONE <span class="brand-divider">|</span> <span class="sub-brand">Status Hub</span></div>
+        <div class="xone-brand">S)ONE <span class="brand-divider">|</span> <span class="sub-brand">Performance Hub</span></div>
         <div class="nav-right">
-            <button id="themeToggle" class="nav-btn theme-btn" aria-label="Changer de thème">
-                Mode Sombre / Clair
-            </button>
-            <div class="nav-links">
-                <a href="#" class="active">Disponibilité</a>
-                <a href="https://xone.fr/" target="_blank">Retour au Hub</a>
-            </div>
+            <button id="themeToggle" class="nav-btn theme-btn">Mode Sombre / Clair</button>
         </div>
     </div>
 </nav>
 
 <div class="container">
 
-    <!-- EN-TÊTE -->
     <header class="header">
-        <div>
-            <h1>Status Opérationnel S)ONE</h1>
-            <p class="sub">Suivi technique en temps réel de l'infrastructure, des flux EDI et des interconnexions douanières.</p>
-            <p class="timezone-indicator">🕒 Fuseau horaire : Europe/Paris (UTC+2)</p>
-        </div>
+        <h1>Métriques Système S)ONE</h1>
+        <p class="sub">Analyse de la disponibilité de Septembre et des temps de réponse de l'infrastructure.</p>
     </header>
 
-    <!-- BANNIÈRE DE STATUT LIVE -->
-    <div id="statusBanner" class="status ok">
-        <span class="pulse-dot"></span> <span id="statusBannerText">Tous les systèmes S)ONE sont pleinement opérationnels</span>
+    <!-- BARRE DE FILTRES AVEC ONGLETS -->
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="changeTimeframe('hour')">Dernières 24 Heures</button>
+        <button class="filter-btn" onclick="changeTimeframe('day')">7 Derniers Jours</button>
+        <button class="filter-btn" onclick="changeTimeframe('week')">Mois de Septembre (Semaines)</button>
     </div>
 
-    <!-- GRILLE TECHNIQUE PRINCIPALE -->
-    <div class="grid-top">
-
-        <!-- DEUX GRAPHIQUES SÉPARÉS -->
-        <div class="card large performance-card">
+    <!-- ZONE DES GRAPHIQUES SÉPARÉS -->
+    <div class="charts-grid">
+        
+        <!-- Graphique 1 : Temps de Réponse -->
+        <div class="card chart-card">
             <div class="card-header">
-                <span class="graph-title">Métriques de Performance Système</span>
-                <span class="badge-uptime">SLA Garanti : 99.95%</span>
+                <h2>Temps de réponse de l'instance</h2>
+                <span class="m-badge">ms</span>
             </div>
-            
-            <!-- Graphique 1 : Temps de Réponse Actuel -->
-            <div class="graph-wrapper">
-                <h3 class="chart-sub-title">Temps de réponse de l'instance (Temps réel)</h3>
-                <div class="chart-container" style="height: 160px; position: relative; margin-bottom: 30px;">
-                    <canvas id="latencyChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Graphique 2 : Disponibilité Septembre -->
-            <div class="graph-wrapper">
-                <h3 class="chart-sub-title">Historique de disponibilité — Mois de Septembre</h3>
-                <div class="chart-container" style="height: 160px; position: relative;">
-                    <canvas id="uptimeSeptemberChart"></canvas>
-                </div>
+            <div class="chart-container">
+                <canvas id="latencyChart"></canvas>
             </div>
         </div>
 
-        <!-- COMPOSANTS CLUSTER INFRASTRUCTURE -->
-        <div class="card components-card">
-            <h2>État des composants S)ONE</h2>
-            <p class="section-desc">Statut individuel et historique de disponibilité des nœuds applicatifs</p>
-            
-            <div class="component-block">
-                <div class="component-row">
-                    <div class="component-info">
-                        <span class="component-name">Nœud Principal (Node-01)</span>
-                    </div>
-                    <span id="node1" class="status-pill ok">Opérationnel</span>
-                </div>
-                <div class="mini-uptime-line" id="node1Line"></div>
+        <!-- Graphique 2 : Disponibilité -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <h2>Disponibilité S)ONE</h2>
+                <span class="m-badge">%</span>
             </div>
-
-            <div class="component-block">
-                <div class="component-row">
-                    <div class="component-info">
-                        <span class="component-name">Nœud Redondant (Node-02)</span>
-                    </div>
-                    <span id="node2" class="status-pill ok">Opérationnel</span>
-                </div>
-                <div class="mini-uptime-line" id="node2Line"></div>
-            </div>
-
-            <div class="component-block">
-                <div class="component-row">
-                    <div class="component-info">
-                        <span class="component-name">Passerelle Douane (API Delta)</span>
-                    </div>
-                    <span id="node3" class="status-pill ok">Opérationnel</span>
-                </div>
-                <div class="mini-uptime-line" id="node3Line"></div>
-            </div>
-
-            <div id="clusterState" class="cluster-summary-box ok">
-                Système résilient (3/3 services actifs)
+            <div class="chart-container">
+                <canvas id="uptimeChart"></canvas>
             </div>
         </div>
 
     </div>
-
-    <!-- HEATMAP TECHNIQUE GLOBALE -->
-    <div class="card section-spacing">
-        <div class="card-header">
-            <h2>Indice d'Uptime quotidien (30 derniers jours)</h2>
-            <div class="heatmap-legend">
-                <span>Indisponibilité</span>
-                <span class="legend-box color-red"></span>
-                <span class="legend-box color-yellow"></span>
-                <span class="legend-box color-green"></span>
-                <span>Opérationnel</span>
-            </div>
-        </div>
-        <div class="heatmap-container">
-            <div class="heatmap" id="globalHeatmap"></div>
-        </div>
-    </div>
-
 </div>
 
 <script>
-/* 1. GESTION DU MODE SOMBRE / CLAIR */
+/* 1. JEU DE DONNÉES CLAIRS (Heure, Jour, Semaine) */
+const datasets = {
+    hour: {
+        labels: ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '00:00', '02:00', '04:00', '06:00', '08:00'],
+        latency: [120, 145, 130, 260, 185, 110, 95, 105, 90, 95, 115, 122],
+        uptime: [100, 100, 100, 99.8, 100, 100, 100, 100, 100, 100, 100, 100],
+        uptimeMin: 99.5
+    },
+    day: {
+        labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
+        latency: [124, 118, 245, 190, 132, 120, 115],
+        uptime: [100, 100, 99.92, 99.97, 100, 100, 99.98],
+        uptimeMin: 99.0
+    },
+    week: {
+        labels: ['Semaine 36', 'Semaine 37', 'Semaine 38', 'Semaine 39', 'Semaine 40 (Fin Sept)'],
+        latency: [135, 142, 188, 122, 119],
+        uptime: [100, 99.98, 99.95, 99.99, 100],
+        uptimeMin: 99.0
+    }
+};
+
+/* 2. INITIALISATION DES GRAPHIQUES */
+const ctxLatency = document.getElementById('latencyChart').getContext('2d');
+const ctxUptime = document.getElementById('uptimeChart').getContext('2d');
+
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
+    }
+};
+
+// Graphique des barres (Latency)
+let latencyChart = new Chart(ctxLatency, {
+    type: 'bar',
+    data: {
+        labels: datasets.hour.labels,
+        datasets: [{
+            data: datasets.hour.latency,
+            backgroundColor: '#38bdf8',
+            borderRadius: 4,
+            barThickness: 'flex',
+            maxBarThickness: 30
+        }]
+    },
+    options: chartOptions
+});
+
+// Graphique des lignes (Uptime)
+let uptimeChart = new Chart(ctxUptime, {
+    type: 'line',
+    data: {
+        labels: datasets.hour.labels,
+        datasets: [{
+            data: datasets.hour.uptime,
+            borderColor: '#0066cc',
+            borderWidth: 3,
+            pointRadius: 3,
+            pointBackgroundColor: '#0066cc',
+            tension: 0.1,
+            fill: false
+        }]
+    },
+    options: {
+        ...chartOptions,
+        scales: {
+            x: { grid: { display: false } },
+            y: { 
+                min: datasets.hour.uptimeMin, 
+                max: 100,
+                ticks: { callback: v => v + '%' },
+                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+            }
+        }
+    }
+});
+
+/* 3. FONCTION DE CHANGEMENT DYNAMIQUE */
+function changeTimeframe(timeframe) {
+    // Mises à jour des états des boutons
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Injection des données
+    latencyChart.data.labels = datasets[timeframe].labels;
+    latencyChart.data.datasets[0].data = datasets[timeframe].latency;
+    
+    uptimeChart.data.labels = datasets[timeframe].labels;
+    uptimeChart.data.datasets[0].data = datasets[timeframe].uptime;
+    uptimeChart.options.scales.y.min = datasets[timeframe].uptimeMin;
+
+    latencyChart.update();
+    uptimeChart.update();
+}
+
+/* 4. MODE SOMBRE & CLAIR */
 const themeToggle = document.getElementById('themeToggle');
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
     document.body.classList.toggle('light-mode');
-    updateChartsTheme();
-});
-
-/* 2. CONFIGURATION DU GRAPHIQUE 1 : TEMPS DE RÉPONSE (Barres) */
-const ctxLatency = document.getElementById('latencyChart').getContext('2d');
-let latencyChart = new Chart(ctxLatency, {
-    type: 'bar',
-    data: {
-        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-        datasets: [{
-            label: 'Temps de réponse (ms)',
-            data: [124, 118, 245, 190, 132, 120, 115],
-            backgroundColor: 'rgba(56, 189, 248, 0.4)',
-            borderColor: 'rgba(56, 189, 248, 1)',
-            borderWidth: 1.5,
-            barThickness: 20
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { grid: { display: false } },
-            y: {
-                min: 0,
-                max: 400,
-                title: { display: true, text: 'ms', font: { size: 11, weight: 'bold' } }
-            }
-        }
-    }
-});
-
-/* 3. CONFIGURATION DU GRAPHIQUE 2 : DISPONIBILITÉ SEPTEMBRE (Courbe) */
-const ctxUptime = document.getElementById('uptimeSeptemberChart').getContext('2d');
-let uptimeSeptemberChart = new Chart(ctxUptime, {
-    type: 'line',
-    data: {
-        // Découpage par semaines clés de Septembre
-        labels: ['01-07 Sept', '08-14 Sept', '15-21 Sept', '22-28 Sept', '29-30 Sept'],
-        datasets: [{
-            label: 'Uptime Global (%)',
-            data: [100, 99.98, 99.95, 99.99, 100],
-            borderColor: '#0066cc',
-            backgroundColor: 'transparent',
-            borderWidth: 2.5,
-            tension: 0.1,
-            pointRadius: 4,
-            pointBackgroundColor: '#0066cc'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { grid: { display: false } },
-            y: {
-                min: 99.4,
-                max: 100,
-                title: { display: true, text: '%', font: { size: 11, weight: 'bold' } },
-                ticks: { callback: value => value + '%' }
-            }
-        }
-    }
-});
-
-/* 4. METTRE À JOUR LE DESIGN DES DEUX GRAPHIQUES (Light/Dark mode) */
-function updateChartsTheme() {
     const isDark = document.body.classList.contains('dark-mode');
-    const color = isDark ? '#94a3b8' : '#64748b';
-    
-    [latencyChart, uptimeSeptemberChart].forEach(chart => {
-        chart.options.scales.x.ticks.color = color;
-        chart.options.scales.y.ticks.color = color;
-        chart.options.scales.y.title.color = color;
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+    const textColor = isDark ? '#94a3b8' : '#64748b';
+
+    [latencyChart, uptimeChart].forEach(chart => {
+        chart.options.scales.x.ticks.color = textColor;
+        chart.options.scales.y.ticks.color = textColor;
+        chart.options.scales.y.grid.color = gridColor;
         chart.update();
     });
-}
-updateChartsTheme();
-
-/* 5. SECTIONS HISTORIQUES ET HEATMAPS ELEMENTS */
-function buildMiniUptimeLine(elementId) {
-    const container = document.getElementById(elementId);
-    for (let i = 0; i < 40; i++) {
-        const segment = document.createElement('div');
-        segment.className = 'segment green';
-        if (Math.random() > 0.97) segment.className = 'segment yellow';
-        container.appendChild(segment);
-    }
-}
-buildMiniUptimeLine('node1Line');
-buildMiniUptimeLine('node2Line');
-buildMiniUptimeLine('node3Line');
-
-const globalHeatmap = document.getElementById("globalHeatmap");
-for (let i = 29; i >= 0; i--) {
-    const cell = document.createElement("div");
-    cell.className = "cell green";
-    if (Math.random() > 0.95) cell.className = "cell yellow";
-    globalHeatmap.appendChild(cell);
-}
+});
 </script>
 </body>
 </html>
