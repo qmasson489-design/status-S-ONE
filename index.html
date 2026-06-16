@@ -9,7 +9,6 @@
 </head>
 <body class="light-mode">
 
-<!-- BARRE DE NAVIGATION ENHANCED AVEC TOGGLE DARK MODE & ABONNEMENT -->
 <nav class="xone-navbar">
     <div class="nav-container">
         <div class="xone-brand">S)ONE <span class="brand-divider">|</span> <span class="sub-brand">Status Hub</span></div>
@@ -17,7 +16,6 @@
             <button id="themeToggle" class="nav-btn theme-btn" aria-label="Changer de thème">
                 <span class="icon-sun">☀️</span><span class="icon-moon">🌙</span>
             </button>
-            <button id="subscribeBtn" class="nav-btn subscribe-btn">S'abonner aux alertes</button>
             <div class="nav-links">
                 <a href="#" class="active">Disponibilité</a>
                 <a href="https://xone.fr/" target="_blank">Retour au Hub</a>
@@ -26,32 +24,8 @@
     </div>
 </nav>
 
-<!-- MODAL D'ABONNEMENT (OPTION A) -->
-<div id="subscribeModal" class="modal hidden">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>S'abonner aux notifications d'incident</h3>
-            <button id="closeModal" class="close-btn">&times;</button>
-        </div>
-        <p class="modal-desc">Recevez des alertes en temps réel par e-mail ou webhook dès qu'une perturbation est détectée sur l'instance S)ONE.</p>
-        <div class="modal-tabs">
-            <button class="modal-tab-btn active" data-tab="email">E-mail</button>
-            <button class="modal-tab-btn" data-tab="webhook">Webhook</button>
-        </div>
-        <div class="modal-tab-content" id="tab-email">
-            <input type="email" placeholder="votre.email@entreprise.com" class="modal-input">
-            <button class="modal-submit-btn">S'abonner via E-mail</button>
-        </div>
-        <div class="modal-tab-content hidden" id="tab-webhook">
-            <input type="url" placeholder="https://api.votreentreprise.com/webhook" class="modal-input">
-            <button class="modal-submit-btn">Configurer le Webhook</button>
-        </div>
-    </div>
-</div>
-
 <div class="container">
 
-    <!-- EN-TÊTE SIMPLIFIÉ ET ÉPURÉ -->
     <header class="header">
         <div>
             <h1>Status Opérationnel S)ONE</h1>
@@ -60,12 +34,10 @@
         </div>
     </header>
 
-    <!-- BANNIÈRE DE STATUT LIVE AVEC TRANSITION FLUIDE -->
     <div id="statusBanner" class="status ok">
         <span class="pulse-dot"></span> <span id="statusBannerText">Tous les systèmes S)ONE sont pleinement opérationnels</span>
     </div>
 
-    <!-- ALERTE DE CRISE DISPOSITIF DOUBLE KO -->
     <div id="criticalIncidentAlert" class="critical-alert hidden">
         <div class="alert-icon">⚠️</div>
         <div class="alert-content">
@@ -75,10 +47,8 @@
         </div>
     </div>
 
-    <!-- GRILLE TECHNIQUE PRINCIPALE AVEC COMMUTATEUR DE MÉTRIQUES (OPTION A + B) -->
     <div class="grid-top">
 
-        <!-- MODULE PERFORMANCE ENHANCED AVEC ONGLETS DE MÉTRIQUES -->
         <div class="card large performance-card">
             <div class="card-header">
                 <div class="metrics-switcher">
@@ -105,12 +75,10 @@
             </div>
         </div>
 
-        <!-- COMPOSANTS CLUSTER INFRASTRUCTURE AVEC MINI LINES D'UPTIME INDIVIDUELLES (OPTION A) -->
         <div class="card components-card">
             <h2>État des composants S)ONE</h2>
             <p class="section-desc">Statut individuel et historique de disponibilité des nœuds applicatifs</p>
             
-            <!-- Composant 1 -->
             <div class="component-block">
                 <div class="component-row">
                     <div class="component-info">
@@ -122,7 +90,6 @@
                 <div class="mini-uptime-line" id="node1Line"></div>
             </div>
 
-            <!-- Composant 2 -->
             <div class="component-block">
                 <div class="component-row">
                     <div class="component-info">
@@ -134,7 +101,6 @@
                 <div class="mini-uptime-line" id="node2Line"></div>
             </div>
 
-            <!-- Composant 3 (Nouveau) -->
             <div class="component-block">
                 <div class="component-row">
                     <div class="component-info">
@@ -153,10 +119,9 @@
 
     </div>
 
-    <!-- HEATMAP TECHNIQUE GLOBALE 30 JOURS -->
     <div class="card section-spacing">
         <div class="card-header">
-            <h2>Indice d'Uptime quotidien consolidé (30 derniers jours)</h2>
+            <h2>Indice d'Uptime quotidien couplé (30 derniers jours)</h2>
             <div class="heatmap-legend">
                 <span>Indisponibilité</span>
                 <span class="legend-box color-red"></span>
@@ -175,13 +140,11 @@
         </div>
     </div>
 
-    <!-- REGISTER DES INCIDENTS CHRONOLOGIQUES -->
     <div class="card section-spacing">
         <h2>Historique de l'instance & Suivi des incidents</h2>
         <p class="section-desc">Registre transparent des événements et maintenances planifiées</p>
         
         <div class="timeline">
-            <!-- INJECTION EN TEMPS RÉEL DES ALERTES SIMULÉES -->
             <div class="timeline-day" id="liveIncidentSection">
                 <div class="timeline-date">Aujourd'hui</div>
                 <div class="timeline-events" id="liveEventsContainer">
@@ -189,7 +152,6 @@
                 </div>
             </div>
 
-            <!-- INCIDENT PASSÉ TRACÉ S)ONE -->
             <div class="timeline-day">
                 <div class="timeline-date">11 Juin 2026</div>
                 <div class="timeline-events">
@@ -220,7 +182,7 @@
 </div>
 
 <script>
-/* 1. GESTION DU MODE SOMBRE / CLAIR (OPTION B) */
+/* 1. GESTION DU MODE SOMBRE / CLAIR */
 const themeToggle = document.getElementById('themeToggle');
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
@@ -228,26 +190,7 @@ themeToggle.addEventListener('click', () => {
     updateChartTheme();
 });
 
-/* 2. GESTION DU MODAL D'ABONNEMENT (OPTION A) */
-const subscribeBtn = document.getElementById('subscribeBtn');
-const subscribeModal = document.getElementById('subscribeModal');
-const closeModal = document.getElementById('closeModal');
-const modalTabs = document.querySelectorAll('.modal-tab-btn');
-
-subscribeBtn.addEventListener('click', () => subscribeModal.classList.remove('hidden'));
-closeModal.addEventListener('click', () => subscribeModal.classList.add('hidden'));
-window.addEventListener('click', (e) => { if(e.target === subscribeModal) subscribeModal.classList.add('hidden'); });
-
-modalTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        modalTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.add('hidden'));
-        document.getElementById(`tab-${tab.dataset.tab}`).classList.remove('hidden');
-    });
-});
-
-/* 3. GENERATION DES LABELS DU GRAPHIQUE */
+/* 2. GENERATION DES LABELS DU GRAPHIQUE */
 function generateTimelineLabels() {
     const labels = [];
     const fullDates = [];
@@ -268,7 +211,7 @@ function generateTimelineLabels() {
 }
 const timeData = generateTimelineLabels();
 
-/* 4. CONFIGURATION MULTI-MÉTRIQUES DE CHART.JS (OPTION A & B) */
+/* 3. CONFIGURATION MULTI-MÉTRIQUES DE CHART.JS */
 const metricsData = {
     uptime: {
         data: [100, 100, 99.99, 99.96, 100, 100, 100],
@@ -356,7 +299,7 @@ function updateChartTheme() {
 }
 updateChartTheme();
 
-/* 5. GENERATION DES HEATMAPS ET MINI LINES D'UPTIME INDIVIDUELLES (OPTION A) */
+/* 4. GENERATION DES HEATMAPS ET MINI LINES D'UPTIME INDIVIDUELLES */
 function buildMiniUptimeLine(elementId) {
     const container = document.getElementById(elementId);
     for (let i = 0; i < 40; i++) {
@@ -391,7 +334,7 @@ for (let i = 29; i >= 0; i--) {
     globalHeatmap.appendChild(cell);
 }
 
-/* 6. SIMULATEUR DYNAMIQUE AVEC TRANSITIONS CSS ET EFFETS LIVE */
+/* 5. SIMULATEUR DYNAMIQUE AVEC TRANSITIONS CSS ET EFFETS LIVE */
 function liveSystemSimulation() {
     const seed = Math.random();
     let n1 = true, n2 = true, n3 = true;
