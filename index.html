@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X)ONE - S)ONE Status Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<nav class="xone-navbar">
+    <div class="nav-container">
+        <div class="xone-brand">X)ONE <span class="brand-divider">|</span> <span class="sub-brand">Status</span></div>
+        <div class="nav-links">
+            <a href="#" class="active">Disponibilité</a>
+            <a href="https://xone.fr/" target="_blank">Retour au Hub</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <header class="header">
+        <div class="logo">S)ONE</div>
+        <div>
+            <h1>Plateforme Port Community System</h1>
+            <p class="sub">Suivi opérationnel en temps réel de votre instance de flux douaniers et logistiques</p>
+        </div>
+    </header>
+
+    <div id="statusBanner" class="status ok">
+        <span class="pulse-dot"></span> <span id="statusBannerText">Tous les systèmes S)ONE sont opérationnels</span>
+    </div>
+
+    <div id="criticalIncidentAlert" class="critical-alert hidden">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-content">
+            <h3>Incident Majeur Proactif — Rupture des flux EDI</h3>
+            <p>L'instance S)ONE rencontre actuellement une interruption totale sur ses serveurs de bases de données. L'envoi et la réception des messages douaniers (manifestes, déclarations, mainlevées) sont temporairement bloqués au port de commerce. Nos équipes de production sont pleinement mobilisées.</p>
+            <div class="alert-meta">Impact : Global | Cible : Communautés Logistiques & Échanges Douanes</div>
+        </div>
+    </div>
+
+    <div class="grid-top">
+
+        <div class="card large performance-card">
+            <div class="card-header">
+                <h2>Taux de disponibilité global</h2>
+                <span class="badge-uptime">SLA Garanti : 99.95%</span>
+            </div>
+            
+            <div class="performance-body">
+                <div class="performance-status-wrapper">
+                    <div class="performance-icon" id="statusIcon">📈</div>
+                    <div class="performance-text-group">
+                        <div class="performance-label" id="statusLabel">État Nominal</div>
+                        <div class="big" id="liveUptimeText">99.98%</div>
+                    </div>
+                </div>
+                <p class="performance-description" id="statusDesc">Excellentes conditions de disponibilité. L'ensemble des files d'attente EDI sont traitées de manière nominale.</p>
+            </div>
+
+            <div class="chart">
+                <canvas id="uptimeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Composants de l'infrastructure S)ONE</h2>
+            <p class="section-desc">État de disponibilité individuel des nœuds applicatifs</p>
+            
+            <div class="component-row">
+                <div class="component-info">
+                    <span class="component-name">Nœud Principal (Node-01)</span>
+                    <span class="component-meta">Traitement des injections EDI</span>
+                </div>
+                <span id="node1" class="status-pill ok">Opérationnel</span>
+            </div>
+
+            <div class="component-row">
+                <div class="component-info">
+                    <span class="component-name">Nœud Redondant (Node-02)</span>
+                    <span class="component-meta">Haute disponibilité & Réplication synchrone</span>
+                </div>
+                <span id="node2" class="status-pill ok">Opérationnel</span>
+            </div>
+
+            <div id="clusterState" class="cluster-summary-box ok">
+                Système résilient (2/2 serveurs actifs)
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card section-spacing">
+        <div class="card-header">
+            <h2>Indice d'Uptime quotidien (30 derniers jours)</h2>
+            <div class="heatmap-legend">
+                <span>Indisponibilité</span>
+                <span class="legend-box color-red"></span>
+                <span class="legend-box color-yellow"></span>
+                <span class="legend-box color-green"></span>
+                <span>Opérationnel</span>
+            </div>
+        </div>
+        
+        <div class="heatmap-container">
+            <div class="heatmap" id="githubHeatmap"></div>
+        </div>
+        <div class="heatmap-footer">
+            <span>Il y a 30 jours</span>
+            <span>Aujourd'hui</span>
+        </div>
+    </div>
+
+    <div class="card section-spacing">
+        <h2>Historique de l'instance & Suivi des incidents</h2>
+        <p class="section-desc">Registre transparent des événements techniques identifiés</p>
+        
+        <div class="timeline">
+            <div class="timeline-day" id="liveIncidentSection">
+                <div class="timeline-date">Aujourd'hui</div>
+                <div class="timeline-events" id="liveEventsContainer">
+                    <div class="no-incidents">🟢 Aucun incident signalé sur ce créneau.</div>
+                </div>
+            </div>
+
+            <div class="timeline-day">
+                <div class="timeline-date">11 Juin 2026</div>
+                <div class="timeline-events">
+                    <div class="timeline-event warning">
+                        <div class="event-header">
+                            <span class="event-badge warning">Résolu</span>
+                            <span class="event-title">Latence réseau sur les interfaces de douane Delta-E / AP+</span>
+                            <span class="event-time">10:15 - 11:40 UTC</span>
+                        </div>
+                        <div class="incident-updates">
+                            <div class="update-block">
+                                <span class="update-status">Résolu</span>
+                                <p class="update-text">Le lien d'interconnexion réseau avec le guichet de l'administration des douanes a été rétabli. La file d'attente des messages EDI en souffrance a été entièrement traitée et acquittée.</p>
+                                <span class="update-time">11:40 UTC</span>
+                            </div>
+                            <div class="update-block">
+                                <span class="update-status">En cours d'investigation</span>
+                                <p class="update-text">Une déconnexion partielle perturbe la transmission automatique. Le trafic applicatif S)ONE est forcé vers les routes réseau secondaires de secours.</p>
+                                <span class="update-time">10:30 UTC</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* GENERATION DYNAMIQUE DES BALISES DE TEMPS POUR LE GRAPHIQUE */
+function generateTimelineLabels() {
+    const labels = [];
+    const fullDates = [];
+    const now = new Date();
+    
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(now.getDate() - i);
+        
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        
+        if (i === 0) {
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            labels.push(`${day}/${month} (${hours}:${minutes})`);
+        } else {
+            labels.push(`${day}/${month}`);
+        }
+        
+        fullDates.push(`${day}/${month}/${year} à ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`);
+    }
+    return { labels, fullDates };
+}
+
+const timeData = generateTimelineLabels();
+
+/* 1. CONFIGURATION CHART.JS */
+const ctx = document.getElementById('uptimeChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: timeData.labels,
+        datasets: [{
+            data: [100, 100, 99.99, 99.96, 100, 100, 100],
+            borderColor: '#0066cc',
+            backgroundColor: 'rgba(0, 102, 204, 0.04)',
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointBackgroundColor: '#0066cc'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        return `Date : ${timeData.fullDates[context[0].dataIndex]}`;
+                    },
+                    label: function(context) {
+                        return ` Disponibilité : ${context.parsed.y}%`;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: { 
+                grid: { display: false }, 
+                ticks: { 
+                    color: '#64748b', 
+                    font: { family: 'Segoe UI', size: 11 }
+                } 
+            },
+            y: { min: 99.6, max: 100, ticks: { color: '#64748b' } }
+        }
+    }
+});
+
+/* 2. LOGIQUE GÉNÉRATION HEATMAP */
+const heatmap = document.getElementById("githubHeatmap");
+for (let i = 29; i >= 0; i--) {
+    const currentCellDate = new Date();
+    currentCellDate.setDate(new Date().getDate() - i);
+    const r = Math.random();
+    let state = "green";
+    let uptime = (100 - (r * 0.04)).toFixed(2);
+    
+    if (r > 0.95) { state = "red"; uptime = (97.40).toFixed(2); } 
+    else if (r > 0.88) { state = "yellow"; uptime = (99.12).toFixed(2); }
+
+    const cell = document.createElement("div");
+    cell.className = `cell ${state}`;
+    cell.setAttribute("title", `${currentCellDate.toLocaleDateString('fr-FR')} : ${uptime}% Uptime`);
+    heatmap.appendChild(cell);
+}
+
+/* 3. SIMULATEUR LIVE INFRASTRUCTURE */
+function liveSystemSimulation() {
+    const seed = Math.random();
+    let node1 = true, node2 = true;
+    
+    if (seed > 0.95) { node1 = false; node2 = false; } 
+    else if (seed > 0.80) { if (Math.random() > 0.5) node1 = false; else node2 = false; } 
+
+    const n1 = document.getElementById("node1");
+    const n2 = document.getElementById("node2");
+    const clusterBox = document.getElementById("clusterState");
+    const banner = document.getElementById("statusBanner");
+    const bannerText = document.getElementById("statusBannerText");
+    const criticalAlert = document.getElementById("criticalIncidentAlert");
+    const liveEvents = document.getElementById("liveEventsContainer");
+    
+    const liveUptime = document.getElementById("liveUptimeText");
+    const statusIcon = document.getElementById("statusIcon");
+    const statusLabel = document.getElementById("statusLabel");
+    const statusDesc = document.getElementById("statusDesc");
+
+    n1.className = node1 ? "status-pill ok" : "status-pill ko";
+    n1.innerText = node1 ? "Opérationnel" : "Indisponible";
+    n2.className = node2 ? "status-pill ok" : "status-pill ko";
+    n2.innerText = node2 ? "Opérationnel" : "Indisponible";
+
+    if (!node1 && !node2) {
+        banner.className = "status critical";
+        bannerText.innerText = "Interruption critique du service S)ONE";
+        clusterBox.className = "cluster-summary-box critical";
+        clusterBox.innerText = "ALERTE : Perte complète de redondance de l'infrastructure";
+        criticalAlert.classList.remove("hidden");
+        
+        liveUptime.innerText = "92.40%";
+        liveUptime.style.color = "#e74c3c";
+        statusIcon.innerText = "🚨";
+        statusLabel.innerText = "Interruption Critique";
+        statusLabel.style.color = "#e74c3c";
+        statusDesc.innerText = "Interruption critique des systèmes. Les serveurs de bases de données applicatifs S)ONE ne répondent plus aux injections de manifestes.";
+        
+        liveEvents.innerHTML = `
+            <div class="timeline-event critical">
+                <div class="event-header">
+                    <span class="event-badge critical">Identifié</span>
+                    <span class="event-title">Coupure complète des liaisons d'infrastructure S)ONE</span>
+                    <span class="event-time">En cours</span>
+                </div>
+                <div class="incident-updates">
+                    <div class="update-block">
+                        <span class="update-status critical">Équipes mobilisées</span>
+                        <p class="update-text">Rupture généralisée de la connectivité. Les processus d'injection automatique et le Store X)ONE subissent des échecs critiques. Nous forçons l'allumage manuel sur l'infrastructure secondaire.</p>
+                        <span class="update-time">À l'instant</span>
+                    </div>
+                </div>
+            </div>`;
+    } else if (!node1 || !node2) {
+        banner.className = "status warning";
+        bannerText.innerText = "Lenteurs et dégradations partielles détectées";
+        clusterBox.className = "cluster-summary-box warning";
+        clusterBox.innerText = "Incident mineur : Fonctionnement assuré sur un seul nœud actif";
+        criticalAlert.classList.add("hidden");
+
+        liveUptime.innerText = "99.82%";
+        liveUptime.style.color = "#f39c12";
+        statusIcon.innerText = "⚠️";
+        statusLabel.innerText = "Flux Perturbé";
+        statusLabel.style.color = "#f39c12";
+        statusDesc.innerText = "Légères perturbations de charge constatées. Le trafic utilisateur bascule de manière transparente sur le second nœud opérationnel.";
+
+        const failNode = !node1 ? "Principal (Node-01)" : "Redondant (Node-02)";
+        liveEvents.innerHTML = `
+            <div class="timeline-event warning">
+                <div class="event-header">
+                    <span class="event-badge warning">Investigation</span>
+                    <span class="event-title">Incident isolé sur le Nœud ${failNode}</span>
+                    <span class="event-time">En cours</span>
+                </div>
+                <div class="incident-updates">
+                    <div class="update-block">
+                        <span class="update-status warning">Analyse en cours</span>
+                        <p class="update-text">Le serveur subit un pic de requêtes suite à l'intégration simultanée de fichiers lourds d'escales maritimes. Le trafic utilisateur reste sécurisé.</p>
+                        <span class="update-time">Il y a 2 min</span>
+                    </div>
+                </div>
+            </div>`;
+    } else {
+        banner.className = "status ok";
+        bannerText.innerText = "Tous les systèmes S)ONE sont opérationnels";
+        clusterBox.className = "cluster-summary-box ok";
+        clusterBox.innerText = "Système résilient (2/2 serveurs actifs)";
+        criticalAlert.classList.add("hidden");
+
+        liveUptime.innerText = "99.98%"
+        liveUptime.style.color = "#2ecc71";
+        statusIcon.innerText = "📈";
+        statusLabel.innerText = "État Nominal";
+        statusLabel.style.color = "#2ecc71";
+        statusDesc.innerText = "Excellentes conditions de disponibilité. L'ensemble des files d'attente EDI sont traitées de manière nominale.";
+        
+        liveEvents.innerHTML = `<div class="no-incidents">🟢 Aucun incident signalé sur ce créneau.</div>`;
+    }
+}
+
+setInterval(liveSystemSimulation, 5000);
+liveSystemSimulation();
+</script>
+</body>
+</html>
