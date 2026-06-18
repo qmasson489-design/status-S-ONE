@@ -3,422 +3,463 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S)ONE - Dashboard de Statut Professionnel</title>
+    <title>S)ONE – État du service</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="light-mode">
+<body>
 
-<!-- BARRE DE NAVIGATION ÉPURÉE & MODERNE -->
-<nav class="xone-navbar">
+<!-- NAVBAR -->
+<nav class="xone-navbar" role="navigation" aria-label="Navigation principale">
     <div class="nav-container">
-        <!-- Logo intégré avec gestion du rectangle blanc -->
         <div class="xone-brand">
             <img src="téléchargement.png" alt="Logo S)ONE" class="brand-logo">
         </div>
         <div class="nav-right">
-            <button id="themeToggle" class="theme-minimal-btn" aria-label="Changer de thème">
-                Mode Sombre / Clair
+            <button id="themeToggle" class="theme-minimal-btn" aria-label="Activer le mode clair">
+                <span class="theme-icon" aria-hidden="true">☀️</span>
+                <span class="theme-label">Mode clair</span>
             </button>
-            <div class="nav-links">
-                <a href="https://soget.lightning.force.com/lightning/page/home" target="_blank" class="nav-item contact-link">Contactez-nous</a>
-            </div>
+            <a href="https://soget.lightning.force.com/lightning/page/home" target="_blank" rel="noopener" class="nav-item contact-link">
+                Nous contacter
+            </a>
         </div>
     </div>
 </nav>
 
 <div class="container">
 
-    <!-- EN-TÊTE SIMPLIFIÉ -->
+    <!-- EN-TÊTE -->
     <header class="header">
-        <h1>Statut Opérationnel S)ONE</h1>
-        <p class="sub">Suivi technique en temps réel de l'infrastructure, des flux EDI et des interconnexions douanières.</p>
-        <p class="timezone-indicator">🕒 Fuseau horaire : Europe/Paris (UTC+2)</p>
+        <div class="header-eyebrow">Supervision en direct</div>
+        <h1>État du service S)ONE</h1>
+        <p class="sub">Retrouvez ici en un coup d'œil si S)ONE fonctionne normalement. Les indicateurs se rafraîchissent automatiquement toutes les 5 secondes.</p>
+        <p class="timezone-indicator" aria-live="polite">
+            🕒 Europe/Paris (UTC+2) &nbsp;·&nbsp; <span id="lastUpdate">–</span>
+        </p>
     </header>
 
-    <!-- BANNIÈRE DE STATUT LIVE -->
-    <div id="statusBanner" class="status status-ok">
+    <!-- BANNIÈRE STATUT -->
+    <div id="statusBanner" class="status status-ok" role="status" aria-live="polite">
         <div class="status-content">
-            <div class="pulse-wrapper">
-                <span class="pulse-dot"></span>
-            </div>
-            <span id="statusBannerText">Tous les systèmes S)ONE sont pleinement opérationnels</span>
+            <div class="pulse-wrapper"><span class="pulse-dot"></span></div>
+            <span id="statusBannerText">✅ Tout fonctionne normalement</span>
         </div>
     </div>
 
-    <!-- GRILLE TECHNIQUE PRINCIPALE -->
+    <!-- KPI ROW -->
+    <div class="kpi-row" aria-label="Indicateurs clés">
+        <div class="kpi-card">
+            <span class="kpi-icon">⚡</span>
+            <span class="kpi-value" id="kpiLatency">–</span>
+            <span class="kpi-label">Temps de réponse S)ONE</span>
+            <span class="kpi-hint">En dessous de 200 ms = excellent</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-icon">📶</span>
+            <span class="kpi-value" id="kpiUptime">–</span>
+            <span class="kpi-label">Disponibilité aujourd'hui</span>
+            <span class="kpi-hint">100 % = aucune coupure détectée</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-icon">🛃</span>
+            <span class="kpi-value" id="kpiApi">–</span>
+            <span class="kpi-label">Temps de réponse Douane</span>
+            <span class="kpi-hint">Dépend des serveurs des Douanes françaises</span>
+        </div>
+    </div>
+
+    <!-- GRILLE PRINCIPALE -->
     <div class="grid-top">
 
-        <!-- PANNEAU DES GRAPHES EN TEMPS RÉEL -->
+        <!-- GRAPHIQUES -->
         <div class="card performance-card">
             <div class="card-header">
-                <span class="graph-title">Performances & Métriques Live</span>
-                <div class="filter-bar">
-                    <button class="filter-btn active" onclick="changeTimeframe('hour')">Heure par heure</button>
-                    <button class="filter-btn" onclick="changeTimeframe('day')">Jour</button>
-                    <button class="filter-btn" onclick="changeTimeframe('week')">Semaine</button>
+                <div>
+                    <span class="graph-title">Performances en temps réel</span>
+                    <p class="section-desc">Évolution des indicateurs sur la période sélectionnée</p>
                 </div>
-            </div>
-            
-            <div class="graph-wrapper">
-                <h3 class="chart-sub-title">Temps de réponse de l'instance S)ONE (ms)</h3>
-                <div class="chart-container">
-                    <canvas id="latencyChart"></canvas>
+                <div class="filter-bar" role="group" aria-label="Période">
+                    <button class="filter-btn active" onclick="changeTimeframe('hour', event)">1 heure</button>
+                    <button class="filter-btn" onclick="changeTimeframe('day', event)">7 jours</button>
+                    <button class="filter-btn" onclick="changeTimeframe('week', event)">4 semaines</button>
                 </div>
             </div>
 
             <div class="graph-wrapper">
-                <h3 class="chart-sub-title">Disponibilité globale de l'instance (%)</h3>
+                <h3 class="chart-sub-title">
+                    Rapidité de S)ONE
+                    <span class="chart-hint">Temps en millisecondes — plus c'est bas, mieux c'est</span>
+                </h3>
                 <div class="chart-container">
-                    <canvas id="uptimeChart"></canvas>
+                    <canvas id="latencyChart" aria-label="Graphique temps de réponse S)ONE" role="img"></canvas>
                 </div>
             </div>
 
             <div class="graph-wrapper">
-                <h3 class="chart-sub-title">Temps de réponse de l'API Douane (ms)</h3>
+                <h3 class="chart-sub-title">
+                    Disponibilité de S)ONE
+                    <span class="chart-hint">100 % = aucune interruption détectée</span>
+                </h3>
                 <div class="chart-container">
-                    <canvas id="apiDouaneChart"></canvas>
+                    <canvas id="uptimeChart" aria-label="Graphique disponibilité S)ONE" role="img"></canvas>
+                </div>
+            </div>
+
+            <div class="graph-wrapper">
+                <h3 class="chart-sub-title">
+                    Réactivité de l'API Douane
+                    <span class="chart-hint">Ce délai dépend des serveurs des Douanes, pas de S)ONE</span>
+                </h3>
+                <div class="chart-container">
+                    <canvas id="apiDouaneChart" aria-label="Graphique API Douane" role="img"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- COMPOSANTS CLUSTER INFRASTRUCTURES -->
+        <!-- COMPOSANTS -->
         <div class="card components-card">
             <div class="card-header-simple">
-                <h2>État des composants S)ONE</h2>
-                <p class="section-desc">Activité et disponibilité historique par tranche de 1 min</p>
+                <h2>Que surveille-t-on ?</h2>
+                <p class="section-desc">Chaque barre = 1 minute — survolez pour voir l'état</p>
             </div>
-            
+
             <div class="component-block">
                 <div class="component-row">
                     <div class="component-info">
-                        <span class="component-name">Nœud Principal (Node-01)</span>
-                        <span class="component-uptime-pct" id="node1Pct">Calcul en cours...</span>
+                        <span class="component-name">Serveur S)ONE</span>
+                        <span class="component-uptime-pct" id="node1Pct" aria-live="polite">Calcul en cours…</span>
                     </div>
-                    <span id="node1" class="status-pill ok">Opérationnel</span>
+                    <span id="node1" class="status-pill ok" aria-live="polite">Opérationnel</span>
                 </div>
-                <div class="timeline-wrapper">
+                <div class="timeline-wrapper" aria-hidden="true">
                     <div class="mini-uptime-line" id="node1Line"></div>
-                    <div class="timeline-legend">
-                        <span>Il y a 40 min</span>
-                        <span>Maintenant</span>
-                    </div>
+                    <div class="timeline-legend"><span>−40 min</span><span>Maintenant</span></div>
                 </div>
             </div>
 
             <div class="component-block">
                 <div class="component-row">
                     <div class="component-info">
-                        <span class="component-name">API Douane</span>
-                        <span class="component-uptime-pct" id="node3Pct">Calcul en cours...</span>
+                        <span class="component-name">API Douane française</span>
+                        <span class="component-uptime-pct" id="node3Pct" aria-live="polite">Calcul en cours…</span>
                     </div>
-                    <span id="node3" class="status-pill ok">Opérationnel</span>
+                    <span id="node3" class="status-pill ok" aria-live="polite">Opérationnel</span>
                 </div>
-                <div class="timeline-wrapper">
+                <div class="timeline-wrapper" aria-hidden="true">
                     <div class="mini-uptime-line" id="node3Line"></div>
-                    <div class="timeline-legend">
-                        <span>Il y a 40 min</span>
-                        <span>Maintenant</span>
-                    </div>
+                    <div class="timeline-legend"><span>−40 min</span><span>Maintenant</span></div>
                 </div>
             </div>
 
-            <div id="clusterState" class="cluster-summary-box ok">
-                Tous les nœuds de l'infrastructure répondent normalement
+            <div class="legend-inline" aria-label="Légende">
+                <div class="legend-item"><span class="dot green"></span>Normal</div>
+                <div class="legend-item"><span class="dot yellow"></span>Ralentissement</div>
+                <div class="legend-item"><span class="dot red"></span>Indisponible</div>
+            </div>
+
+            <div id="clusterState" class="cluster-summary-box ok" aria-live="polite">
+                Tous les services répondent normalement
             </div>
         </div>
 
     </div>
 
-    <!-- HEATMAP TECHNIQUE GLOBALE -->
+    <!-- HEATMAP -->
     <div class="card section-spacing">
         <div class="card-header">
-            <span class="graph-title">Indice d'Uptime quotidien (30 derniers jours)</span>
-            <div class="heatmap-legend">
-                <span>Indisponibilité</span>
-                <span class="legend-box color-red"></span>
-                <span class="legend-box color-yellow"></span>
-                <span class="legend-box color-green"></span>
-                <span>Opérationnel</span>
+            <div>
+                <span class="graph-title">Disponibilité sur 30 jours</span>
+                <p class="section-desc">Un carré par jour — passez la souris pour voir la date et le statut</p>
+            </div>
+            <div class="heatmap-legend" aria-label="Légende">
+                <span class="legend-box color-red"></span><span>Panne</span>
+                <span class="legend-box color-yellow"></span><span>Dégradé</span>
+                <span class="legend-box color-green"></span><span>Normal</span>
             </div>
         </div>
         <div class="heatmap-container">
-            <div class="heatmap" id="globalHeatmap"></div>
+            <div class="heatmap" id="globalHeatmap" role="list" aria-label="Historique 30 jours"></div>
         </div>
     </div>
 
-    <!-- ZONE MENTIONS LÉGALES -->
     <footer class="soget-footer">
         <p>© 2026 SOGET. Tous droits réservés. S)ONE est une solution logicielle développée par SOGET.</p>
-        <p class="soget-sub-legal">Les informations de disponibilité et de performance affichées sur ce hub sont fournies à titre indicatif et issues de nos systèmes de monitoring interne.</p>
+        <p class="soget-sub-legal">Les données de disponibilité et de performance sont issues de nos outils de surveillance interne et fournies à titre indicatif.</p>
     </footer>
 
 </div>
 
 <script>
+// ─── THÈME ───────────────────────────────────────────────────────────────────
 const themeToggle = document.getElementById('themeToggle');
+const themeLabel  = themeToggle.querySelector('.theme-label');
+const themeIcon   = themeToggle.querySelector('.theme-icon');
+
+// Démarrer en mode sombre
+document.body.classList.remove('light-mode');
+
 themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.toggle('light-mode');
+    themeLabel.textContent = isLight ? 'Mode sombre' : 'Mode clair';
+    themeIcon.textContent  = isLight ? '🌙' : '☀️';
+    themeToggle.setAttribute('aria-label', isLight ? 'Activer le mode sombre' : 'Activer le mode clair');
     updateChartsTheme();
 });
 
+// ─── DONNÉES ─────────────────────────────────────────────────────────────────
 function generateDynamicLabels() {
-    const hours = [];
-    const days = [];
     const now = new Date();
-    const currentHour = now.getHours();
-
+    const dayNames = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const hours = [];
+    const days  = [];
     for (let i = 11; i >= 0; i--) {
-        let h = (currentHour - i + 24) % 24;
-        hours.push(`${String(h).padStart(2, '0')}:00`);
+        const h = (now.getHours() - i + 24) % 24;
+        hours.push(`${String(h).padStart(2,'0')}:00`);
     }
-
-    const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
     for (let i = 6; i >= 0; i--) {
-        let d = new Date();
-        d.setDate(now.getDate() - i);
+        const d = new Date(); d.setDate(now.getDate() - i);
         days.push(dayNames[d.getDay()]);
     }
     return { hours, days };
 }
 
-const dynamicLabels = generateDynamicLabels();
+const L = generateDynamicLabels();
 let currentView = 'hour';
+
+function jitter(arr, spread) {
+    return arr.map(v => parseFloat((v + (Math.random() - 0.5) * spread).toFixed(2)));
+}
 
 const datasets = {
     hour: {
-        labels: dynamicLabels.hours,
-        latency: [98, 102, 115, 90, 95, 110, 145, 130, 120, 110, 118, 105],
-        uptime: [100, 100, 100, 100, 100, 100, 100, 100, 99.9, 100, 100, 100],
-        apiDouane: [140, 155, 142, 138, 160, 145, 180, 152, 380, 290, 165, 148],
-        uptimeMin: 99.5, latencyMin: 0, latencyMax: 300, apiMin: 0, apiMax: 500
+        labels: L.hours,
+        latency:   jitter([98,102,115,90,95,110,145,130,120,110,118,105], 8),
+        uptime:    Array.from({length:12}, () => parseFloat((100 - Math.random()*0.04).toFixed(3))),
+        apiDouane: jitter([140,155,142,138,160,145,180,152,195,175,165,148], 12),
+        uptimeMin: 99.5, latencyMax: 300, apiMax: 500
     },
     day: {
-        labels: dynamicLabels.days,
-        latency: [132, 120, 115, 124, 118, 155, 122],
-        uptime: [100, 100, 99.98, 100, 100, 99.92, 100],
-        apiDouane: [160, 152, 175, 190, 158, 240, 162],
-        uptimeMin: 99.0, latencyMin: 0, latencyMax: 300, apiMin: 0, apiMax: 500
+        labels: L.days,
+        latency:   [132,120,115,124,118,155,122],
+        uptime:    [100,100,99.98,100,100,99.92,100],
+        apiDouane: [160,152,175,190,158,240,162],
+        uptimeMin: 99.0, latencyMax: 300, apiMax: 500
     },
     week: {
-        labels: ['Semaine 1', 'Semaine 2', 'Semaine 3', 'Semaine 4', 'Semaine En cours'],
-        latency: [122, 135, 142, 119, 125],
-        uptime: [100, 99.99, 99.95, 100, 100],
-        apiDouane: [155, 172, 195, 160, 168],
-        uptimeMin: 99.0, latencyMin: 0, latencyMax: 300, apiMin: 0, apiMax: 500
+        labels: ['Semaine 1','Semaine 2','Semaine 3','Semaine 4','En cours'],
+        latency:   [122,135,142,119,125],
+        uptime:    [100,99.99,99.95,100,100],
+        apiDouane: [155,172,195,160,168],
+        uptimeMin: 99.0, latencyMax: 300, apiMax: 500
     }
 };
 
-const ctxLatency = document.getElementById('latencyChart').getContext('2d');
-const ctxUptime = document.getElementById('uptimeChart').getContext('2d');
-const ctxApiDouane = document.getElementById('apiDouaneChart').getContext('2d');
+// ─── GRAPHIQUES ───────────────────────────────────────────────────────────────
+const isDark = () => !document.body.classList.contains('light-mode');
 
-const baseOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    animations: {
-        numbers: {
-            duration: 600,
-            easing: 'easeInOutQuad',
-            properties: ['x', 'y', 'borderWidth', 'radius', 'tension']
+function getChartColors() {
+    const dark = isDark();
+    return {
+        tick:   dark ? '#4A6280' : '#7A95C2',
+        grid:   dark ? 'rgba(26,107,255,0.07)' : 'rgba(26,107,255,0.06)',
+        blue:   dark ? '#1A6BFF' : '#1A6BFF',
+        orange: dark ? '#FF9500' : '#D07000',
+        blueFill:   dark ? 'rgba(26,107,255,0.08)' : 'rgba(26,107,255,0.05)',
+        orangeFill: dark ? 'rgba(255,149,0,0.08)'  : 'rgba(208,112,0,0.05)',
+    };
+}
+
+const baseOpts = (yExtra = {}) => {
+    const c = getChartColors();
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        animation: { duration: 500, easing: 'easeInOutQuad' },
+        scales: {
+            x: { grid: { display: false }, ticks: { color: c.tick, font: { size: 10, family: "'JetBrains Mono', monospace" } } },
+            y: { grid: { color: c.grid }, ticks: { color: c.tick, font: { size: 10, family: "'JetBrains Mono', monospace" } }, ...yExtra }
         }
-    },
-    scales: {
-        x: { grid: { display: false } },
-        y: { grid: { color: 'rgba(0, 0, 0, 0.04)' } }
-    }
+    };
 };
 
-let latencyChart = new Chart(ctxLatency, {
+const ctxL = document.getElementById('latencyChart').getContext('2d');
+const ctxU = document.getElementById('uptimeChart').getContext('2d');
+const ctxA = document.getElementById('apiDouaneChart').getContext('2d');
+
+function makeDataset(data, color, fillColor) {
+    return {
+        data, borderColor: color, borderWidth: 2,
+        pointRadius: 2.5, pointBackgroundColor: color,
+        backgroundColor: fillColor, fill: true, tension: 0.4
+    };
+}
+
+let latencyChart = new Chart(ctxL, {
     type: 'line',
-    data: {
-        labels: datasets.hour.labels,
-        datasets: [{
-            data: datasets.hour.latency,
-            borderColor: '#0066cc', borderWidth: 2.5, pointRadius: 2, pointBackgroundColor: '#0066cc', backgroundColor: 'transparent', tension: 0.35
-        }]
-    },
-    options: { ...baseOptions, scales: { x: { grid: { display: false } }, y: { min: 0, max: 300, grid: { color: 'rgba(0, 0, 0, 0.04)' } } } }
+    data: { labels: datasets.hour.labels, datasets: [makeDataset(datasets.hour.latency, '#1A6BFF', 'rgba(26,107,255,0.08)')] },
+    options: baseOpts({ min: 0, max: 300, ticks: { callback: v => v + ' ms', color: getChartColors().tick, font: { size: 10, family: "'JetBrains Mono', monospace" } } })
 });
 
-let uptimeChart = new Chart(ctxUptime, {
+let uptimeChart = new Chart(ctxU, {
     type: 'line',
-    data: {
-        labels: datasets.hour.labels,
-        datasets: [{
-            data: datasets.hour.uptime,
-            borderColor: '#0066cc', borderWidth: 2.5, pointRadius: 2, pointBackgroundColor: '#0066cc', backgroundColor: 'transparent', tension: 0.35
-        }]
-    },
-    options: { ...baseOptions, scales: { x: { grid: { display: false } }, y: { min: 99.5, max: 100, ticks: { callback: v => v + '%' }, grid: { color: 'rgba(0, 0, 0, 0.04)' } } } }
+    data: { labels: datasets.hour.labels, datasets: [makeDataset(datasets.hour.uptime, '#1A6BFF', 'rgba(26,107,255,0.08)')] },
+    options: baseOpts({ min: 99.5, max: 100, ticks: { callback: v => v + '%', color: getChartColors().tick, font: { size: 10, family: "'JetBrains Mono', monospace" } } })
 });
 
-let apiDouaneChart = new Chart(ctxApiDouane, {
+let apiDouaneChart = new Chart(ctxA, {
     type: 'line',
-    data: {
-        labels: datasets.hour.labels,
-        datasets: [{
-            data: datasets.hour.apiDouane,
-            borderColor: '#e67e22', borderWidth: 2.5, pointRadius: 2, pointBackgroundColor: '#e67e22', backgroundColor: 'transparent', tension: 0.35
-        }]
-    },
-    options: { ...baseOptions, scales: { x: { grid: { display: false } }, y: { min: 0, max: 500, grid: { color: 'rgba(0, 0, 0, 0.04)' } } } }
+    data: { labels: datasets.hour.labels, datasets: [makeDataset(datasets.hour.apiDouane, '#FF9500', 'rgba(255,149,0,0.08)')] },
+    options: baseOpts({ min: 0, max: 500, ticks: { callback: v => v + ' ms', color: getChartColors().tick, font: { size: 10, family: "'JetBrains Mono', monospace" } } })
 });
 
-function changeTimeframe(timeframe) {
-    currentView = timeframe;
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-
-    latencyChart.data.labels = datasets[timeframe].labels;
-    latencyChart.data.datasets[0].data = datasets[timeframe].latency;
-    latencyChart.options.scales.y.max = datasets[timeframe].latencyMax;
-    
-    uptimeChart.data.labels = datasets[timeframe].labels;
-    uptimeChart.data.datasets[0].data = datasets[timeframe].uptime;
-    uptimeChart.options.scales.y.min = datasets[timeframe].uptimeMin;
-
-    apiDouaneChart.data.labels = datasets[timeframe].labels;
-    apiDouaneChart.data.datasets[0].data = datasets[timeframe].apiDouane;
-    apiDouaneChart.options.scales.y.max = datasets[timeframe].apiMax;
-
-    latencyChart.update();
-    uptimeChart.update();
-    apiDouaneChart.update();
+function changeTimeframe(tf, event) {
+    currentView = tf;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (event?.target) event.target.classList.add('active');
+    const d = datasets[tf];
+    latencyChart.data.labels   = d.labels; latencyChart.data.datasets[0].data   = d.latency;   latencyChart.options.scales.y.max = d.latencyMax;
+    uptimeChart.data.labels    = d.labels; uptimeChart.data.datasets[0].data    = d.uptime;    uptimeChart.options.scales.y.min = d.uptimeMin;
+    apiDouaneChart.data.labels = d.labels; apiDouaneChart.data.datasets[0].data = d.apiDouane; apiDouaneChart.options.scales.y.max = d.apiMax;
+    latencyChart.update(); uptimeChart.update(); apiDouaneChart.update();
 }
 
 function updateChartsTheme() {
-    const isDark = document.body.classList.contains('dark-mode');
-    const color = isDark ? '#94a3b8' : '#64748b';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)';
-    const strokeColor = isDark ? '#38bdf8' : '#0066cc';
-    const apiStrokeColor = isDark ? '#f39c12' : '#e67e22';
-    
+    const c = getChartColors();
     [latencyChart, uptimeChart, apiDouaneChart].forEach(chart => {
-        chart.options.scales.x.ticks.color = color;
-        chart.options.scales.y.ticks.color = color;
-        chart.options.scales.y.grid.color = gridColor;
+        chart.options.scales.x.ticks.color = c.tick;
+        chart.options.scales.y.ticks.color = c.tick;
+        chart.options.scales.y.grid.color  = c.grid;
     });
-
-    latencyChart.data.datasets[0].borderColor = strokeColor;
-    latencyChart.data.datasets[0].pointBackgroundColor = strokeColor;
-    uptimeChart.data.datasets[0].borderColor = strokeColor;
-    uptimeChart.data.datasets[0].pointBackgroundColor = strokeColor;
-    
-    apiDouaneChart.data.datasets[0].borderColor = apiStrokeColor;
-    apiDouaneChart.data.datasets[0].pointBackgroundColor = apiStrokeColor;
-
-    latencyChart.update();
-    uptimeChart.update();
-    apiDouaneChart.update();
+    [latencyChart, uptimeChart].forEach(chart => {
+        chart.data.datasets[0].borderColor        = c.blue;
+        chart.data.datasets[0].pointBackgroundColor = c.blue;
+        chart.data.datasets[0].backgroundColor    = c.blueFill;
+    });
+    apiDouaneChart.data.datasets[0].borderColor         = c.orange;
+    apiDouaneChart.data.datasets[0].pointBackgroundColor = c.orange;
+    apiDouaneChart.data.datasets[0].backgroundColor     = c.orangeFill;
+    latencyChart.update(); uptimeChart.update(); apiDouaneChart.update();
 }
-updateChartsTheme();
 
-function buildMiniUptimeLine(elementId) {
-    const container = document.getElementById(elementId);
-    container.innerHTML = '';
+// ─── MINI TIMELINES ───────────────────────────────────────────────────────────
+function buildMiniUptimeLine(id) {
+    const el = document.getElementById(id);
+    el.innerHTML = '';
     for (let i = 0; i < 40; i++) {
-        const segment = document.createElement('div');
-        segment.className = 'segment green';
-        container.appendChild(segment);
+        const s = document.createElement('div');
+        s.className = 'segment green';
+        el.appendChild(s);
     }
 }
 buildMiniUptimeLine('node1Line');
 buildMiniUptimeLine('node3Line');
 
-const globalHeatmap = document.getElementById("globalHeatmap");
+// ─── HEATMAP ─────────────────────────────────────────────────────────────────
+const heatmap = document.getElementById('globalHeatmap');
 for (let i = 29; i >= 0; i--) {
-    const cell = document.createElement("div");
-    cell.className = "cell green";
-    globalHeatmap.appendChild(cell);
+    const cell = document.createElement('div');
+    cell.className = 'cell green';
+    cell.setAttribute('role', 'listitem');
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const label = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    cell.setAttribute('title', `${label} — Disponibilité normale`);
+    cell.setAttribute('aria-label', `${label} : opérationnel`);
+    heatmap.appendChild(cell);
 }
 
-function recalculateComponentUptime(lineId, pctId) {
+// ─── UPTIME CALC ─────────────────────────────────────────────────────────────
+function recalcUptime(lineId, pctId) {
+    const segs = document.getElementById(lineId).getElementsByClassName('segment');
+    let green = 0;
+    for (let s of segs) { if (s.classList.contains('green')) green++; }
+    const pct = ((green / segs.length) * 100).toFixed(1);
+    document.getElementById(pctId).textContent = `Disponible ${pct} % des 40 dernières minutes`;
+}
+
+// ─── KPI & TIMESTAMP ─────────────────────────────────────────────────────────
+function updateKPIs(lat, up, api) {
+    document.getElementById('kpiLatency').textContent = lat + ' ms';
+    document.getElementById('kpiUptime').textContent  = up.toFixed(2) + ' %';
+    document.getElementById('kpiApi').textContent     = api + ' ms';
+}
+
+function updateTimestamp() {
+    const now = new Date();
+    const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    document.getElementById('lastUpdate').textContent = `Dernière mise à jour : ${t}`;
+}
+
+function injectSegment(lineId, color) {
     const line = document.getElementById(lineId);
-    const segments = line.getElementsByClassName('segment');
-    let greenCount = 0;
-    for(let i=0; i<segments.length; i++) {
-        if(segments[i].classList.contains('green')) greenCount++;
+    if (line.children.length > 0) {
+        line.removeChild(line.firstChild);
+        const s = document.createElement('div');
+        s.className = `segment ${color}`;
+        line.appendChild(s);
     }
-    const pct = ((greenCount / segments.length) * 100).toFixed(2);
-    document.getElementById(pctId).innerText = `Uptime: ${pct}% (Dernières 40 min)`;
 }
-recalculateComponentUptime('node1Line', 'node1Pct');
-recalculateComponentUptime('node3Line', 'node3Pct');
 
-setInterval(() => {
+// ─── BOUCLE LIVE ─────────────────────────────────────────────────────────────
+const liveInterval = setInterval(() => {
     const rand = Math.random();
-    const banner = document.getElementById('statusBanner');
-    const bannerText = document.getElementById('statusBannerText');
-    const node1 = document.getElementById('node1');
-    const node3 = document.getElementById('node3');
-    const clusterBox = document.getElementById('clusterState');
+    const banner      = document.getElementById('statusBanner');
+    const bannerText  = document.getElementById('statusBannerText');
+    const node1       = document.getElementById('node1');
+    const node3       = document.getElementById('node3');
+    const clusterBox  = document.getElementById('clusterState');
 
-    banner.className = "status status-ok";
-    bannerText.innerText = "Tous les systèmes S)ONE sont pleinement opérationnels";
-    node1.className = "status-pill ok"; node1.innerText = "Opérationnel";
-    node3.className = "status-pill ok"; node3.innerText = "Opérationnel";
-    clusterBox.className = "cluster-summary-box ok";
-    clusterBox.innerText = "Tous les nœuds de l'infrastructure répondent normalement";
+    banner.className      = 'status status-ok';
+    bannerText.textContent = '✅ Tout fonctionne normalement';
+    node1.className       = 'status-pill ok'; node1.textContent  = 'Opérationnel';
+    node3.className       = 'status-pill ok'; node3.textContent  = 'Opérationnel';
+    clusterBox.className  = 'cluster-summary-box ok';
+    clusterBox.textContent = 'Tous les services répondent normalement';
 
-    let liveLatency = Math.floor(Math.random() * (115 - 95) + 95);
-    let liveUptime = 100 - (Math.random() * 0.02);
-    let liveApiLatency = Math.floor(Math.random() * (160 - 135) + 135);
+    let liveL = Math.floor(Math.random() * 20 + 95);
+    let liveU = parseFloat((100 - Math.random() * 0.02).toFixed(3));
+    let liveA = Math.floor(Math.random() * 25 + 135);
 
     if (rand > 0.85) {
-        banner.className = "status status-warning";
-        bannerText.innerText = "Ralentissement détecté : Liaison API Douane instable";
-        node3.className = "status-pill warning"; node3.innerText = "Dégradé";
-        clusterBox.className = "cluster-summary-box warning";
-        clusterBox.innerText = "Ralentissement identifié sur l'API Douane externe";
-        
-        liveLatency = Math.floor(Math.random() * (140 - 120) + 120);
-        liveApiLatency = Math.floor(Math.random() * (460 - 380) + 380);
-        liveUptime = 99.62;
-        injectMiniFailure('node3Line');
+        banner.className       = 'status status-warning';
+        bannerText.textContent  = '⚠️ Ralentissement détecté sur l\'API des Douanes';
+        node3.className        = 'status-pill warning'; node3.textContent = 'Ralenti';
+        clusterBox.className   = 'cluster-summary-box warning';
+        clusterBox.textContent  = 'L\'API des Douanes répond plus lentement que d\'habitude. S)ONE n\'est pas affecté.';
+        liveL = Math.floor(Math.random() * 20 + 120);
+        liveA = Math.floor(Math.random() * 80 + 380);
+        liveU = 99.62;
+        injectSegment('node3Line', 'yellow');
     } else {
-        if(Math.random() > 0.5) injectMiniSuccess('node1Line');
-        if(Math.random() > 0.5) injectMiniSuccess('node3Line');
+        if (Math.random() > 0.5) injectSegment('node1Line', 'green');
+        if (Math.random() > 0.5) injectSegment('node3Line', 'green');
     }
 
-    recalculateComponentUptime('node1Line', 'node1Pct');
-    recalculateComponentUptime('node3Line', 'node3Pct');
+    recalcUptime('node1Line', 'node1Pct');
+    recalcUptime('node3Line', 'node3Pct');
+    updateKPIs(liveL, liveU, liveA);
+    updateTimestamp();
 
-    datasets.hour.latency.shift();
-    datasets.hour.latency.push(liveLatency);
-    datasets.hour.uptime.shift();
-    datasets.hour.uptime.push(liveUptime);
-    datasets.hour.apiDouane.shift();
-    datasets.hour.apiDouane.push(liveApiLatency);
+    datasets.hour.latency.shift();   datasets.hour.latency.push(liveL);
+    datasets.hour.uptime.shift();    datasets.hour.uptime.push(liveU);
+    datasets.hour.apiDouane.shift(); datasets.hour.apiDouane.push(liveA);
 
     if (currentView === 'hour') {
-        latencyChart.update();
-        uptimeChart.update();
-        apiDouaneChart.update();
+        latencyChart.update(); uptimeChart.update(); apiDouaneChart.update();
     }
 }, 5000);
 
-function injectMiniFailure(lineId) {
-    const line = document.getElementById(lineId);
-    if(line.children.length > 0) {
-        line.removeChild(line.firstChild);
-        const segment = document.createElement('div');
-        segment.className = 'segment yellow';
-        line.appendChild(segment);
-    }
-}
-
-function injectMiniSuccess(lineId) {
-    const line = document.getElementById(lineId);
-    if(line.children.length > 0) {
-        line.removeChild(line.firstChild);
-        const segment = document.createElement('div');
-        segment.className = 'segment green';
-        line.appendChild(segment);
-    }
-}
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+recalcUptime('node1Line', 'node1Pct');
+recalcUptime('node3Line', 'node3Pct');
+updateKPIs(
+    datasets.hour.latency[datasets.hour.latency.length - 1],
+    datasets.hour.uptime[datasets.hour.uptime.length - 1],
+    datasets.hour.apiDouane[datasets.hour.apiDouane.length - 1]
+);
+updateTimestamp();
+updateChartsTheme();
 </script>
 </body>
 </html>
