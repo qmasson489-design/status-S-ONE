@@ -36,7 +36,12 @@
     --banner-warn-to:   #1A1000;
     --banner-warn-text: #FF9500;
 
-    --nav-bg:           rgba(10, 14, 26, 0.85);
+    --nav-bg:           rgba(10, 14, 26, 0.92);
+
+    --ticker-bg:        #0A1628;
+    --ticker-border:    rgba(26, 107, 255, 0.18);
+    --ticker-warn-bg:   #1F0D00;
+    --ticker-warn-border: rgba(255, 149, 0, 0.3);
 }
 
 /* THÈME CLAIR */
@@ -70,7 +75,12 @@ body.light-mode {
     --banner-warn-to:   #FFF8ED;
     --banner-warn-text: #8A4800;
 
-    --nav-bg:           rgba(240, 244, 255, 0.92);
+    --nav-bg:           rgba(240, 244, 255, 0.95);
+
+    --ticker-bg:        #EEF3FF;
+    --ticker-border:    rgba(26, 107, 255, 0.14);
+    --ticker-warn-bg:   #FFF4E5;
+    --ticker-warn-border: rgba(208, 112, 0, 0.25);
 }
 
 /* ==========================================================================
@@ -88,7 +98,6 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Grille de fond subtile */
 body::before {
     content: '';
     position: fixed;
@@ -146,11 +155,9 @@ body.light-mode::before {
     height: 38px;
     width: auto;
     display: block;
-    transition: filter 0.25s ease, opacity 0.25s;
+    transition: opacity 0.25s;
 }
-
 .brand-logo:hover { opacity: 0.85; }
-
 body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
 
 .nav-right { display: flex; align-items: center; gap: 10px; }
@@ -171,13 +178,7 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     transition: all 0.15s;
     letter-spacing: 0.01em;
 }
-
-.theme-minimal-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-glow);
-}
-
+.theme-minimal-btn:hover { border-color: var(--accent); color: var(--accent); }
 .theme-minimal-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .nav-item {
@@ -194,15 +195,81 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     transition: all 0.15s;
     letter-spacing: 0.01em;
 }
+.nav-item:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-glow); }
 
-.nav-item:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-    background: var(--accent-glow);
+/* ==========================================================================
+   4. TICKER D'INCIDENTS
+   ========================================================================== */
+.incident-ticker {
+    background: var(--ticker-bg);
+    border-bottom: 1px solid var(--ticker-border);
+    padding: 8px 0;
+    overflow: hidden;
+    position: sticky;
+    top: 67px;
+    z-index: 90;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.incident-ticker.warning {
+    background: var(--ticker-warn-bg);
+    border-bottom-color: var(--ticker-warn-border);
+}
+
+.ticker-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.ticker-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+    border: 1px solid transparent;
+}
+
+.ticker-badge.ok {
+    background: var(--success-bg);
+    color: var(--success);
+    border-color: var(--success-border);
+}
+
+.ticker-badge.warning {
+    background: var(--warning-bg);
+    color: var(--warning);
+    border-color: var(--warning-border);
+}
+
+.ticker-track {
+    overflow: hidden;
+    flex: 1;
+    mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+}
+
+.ticker-text {
+    display: inline-block;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+    animation: ticker-scroll 30s linear infinite;
+}
+
+@keyframes ticker-scroll {
+    0%   { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
 }
 
 /* ==========================================================================
-   4. EN-TÊTE
+   5. EN-TÊTE
    ========================================================================== */
 .header {
     margin: 56px 0 32px;
@@ -264,7 +331,7 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
 }
 
 /* ==========================================================================
-   5. BANNIÈRE STATUT — ÉLÉMENT SIGNATURE
+   6. BANNIÈRE STATUT
    ========================================================================== */
 .status {
     border-radius: 14px;
@@ -291,7 +358,6 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     color: var(--banner-warn-text);
 }
 
-/* Lueur animée derrière la bannière */
 .status::before {
     content: '';
     position: absolute;
@@ -350,7 +416,7 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
 }
 
 /* ==========================================================================
-   6. KPI ROW
+   7. KPI ROW — avec micro-tendances
    ========================================================================== */
 .kpi-row {
     display: grid;
@@ -373,7 +439,6 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Ligne de couleur en bas selon état */
 .kpi-card::after {
     content: '';
     position: absolute;
@@ -389,10 +454,32 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
 .kpi-card:hover { border-color: var(--border-bright); box-shadow: var(--shadow-glow); }
 .kpi-card:hover::after { opacity: 1; }
 
-.kpi-icon {
-    font-size: 13px;
+.kpi-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 4px;
-    opacity: 0.6;
+}
+
+.kpi-icon { font-size: 13px; opacity: 0.6; }
+
+.kpi-trend {
+    font-size: 10.5px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+}
+
+.kpi-trend.trend-good {
+    color: var(--success);
+    background: var(--success-bg);
+}
+
+.kpi-trend.trend-bad {
+    color: var(--warning);
+    background: var(--warning-bg);
 }
 
 .kpi-value {
@@ -418,7 +505,7 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
 }
 
 /* ==========================================================================
-   7. CARTE DE BASE
+   8. CARTE DE BASE
    ========================================================================== */
 .card {
     background: var(--bg-card);
@@ -441,27 +528,14 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
 }
 
 .card-header-simple { margin-bottom: 22px; }
+.card-header-simple h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 3px; }
 
-.card-header-simple h2 {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-    margin-bottom: 3px;
-}
-
-.graph-title {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-    display: block;
-    margin-bottom: 3px;
-}
-
+.graph-title { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; display: block; margin-bottom: 3px; }
 .section-desc { font-size: 12px; color: var(--text-muted); }
 .section-spacing { margin-top: 20px; }
 
 /* ==========================================================================
-   8. GRAPHIQUES
+   9. GRAPHIQUES
    ========================================================================== */
 .graph-wrapper {
     margin-bottom: 26px;
@@ -470,7 +544,6 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     border-radius: 10px;
     padding: 14px 16px;
 }
-
 .graph-wrapper:last-of-type { margin-bottom: 0; }
 
 .chart-sub-title {
@@ -517,28 +590,20 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     transition: all 0.15s;
     letter-spacing: 0.02em;
 }
-
-.filter-btn.active {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(26,107,255,0.35);
-}
-
+.filter-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(26,107,255,0.35); }
 .filter-btn:not(.active):hover { color: var(--text-main); }
 .filter-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ==========================================================================
-   9. COMPOSANTS & TIMELINES
+   10. COMPOSANTS & TIMELINES
    ========================================================================== */
 .component-block {
-    margin-bottom: 22px;
+    margin-bottom: 16px;
     background: var(--bg-card-alt);
     border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 14px;
 }
-
-.component-block:last-of-type { margin-bottom: 0; }
 
 .component-row {
     display: flex;
@@ -548,7 +613,6 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
 }
 
 .component-info { display: flex; flex-direction: column; gap: 2px; }
-
 .component-name { font-size: 13px; font-weight: 700; }
 
 .component-uptime-pct {
@@ -567,18 +631,8 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     border: 1px solid transparent;
     white-space: nowrap;
 }
-
-.status-pill.ok {
-    background: var(--success-bg);
-    color: var(--success);
-    border-color: var(--success-border);
-}
-
-.status-pill.warning {
-    background: var(--warning-bg);
-    color: var(--warning);
-    border-color: var(--warning-border);
-}
+.status-pill.ok      { background: var(--success-bg); color: var(--success); border-color: var(--success-border); }
+.status-pill.warning { background: var(--warning-bg); color: var(--warning); border-color: var(--warning-border); }
 
 .timeline-wrapper { display: flex; flex-direction: column; width: 100%; }
 
@@ -597,9 +651,7 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     transition: background-color 0.25s, transform 0.1s;
     cursor: default;
 }
-
 .mini-uptime-line .segment:hover { transform: scaleY(1.4); }
-
 .mini-uptime-line .segment.green  { background-color: var(--success); }
 .mini-uptime-line .segment.yellow { background-color: var(--warning); }
 .mini-uptime-line .segment.red    { background-color: var(--danger); }
@@ -613,13 +665,7 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* Légende couleurs */
-.legend-inline {
-    display: flex;
-    gap: 14px;
-    margin: 18px 0 14px;
-    flex-wrap: wrap;
-}
+.legend-inline { display: flex; gap: 14px; margin: 16px 0 14px; flex-wrap: wrap; }
 
 .legend-item {
     display: flex;
@@ -630,20 +676,13 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     font-weight: 500;
 }
 
-.dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    display: inline-block;
-    flex-shrink: 0;
-}
-
+.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 .dot.green  { background-color: var(--success); box-shadow: 0 0 4px var(--success); }
 .dot.yellow { background-color: var(--warning); box-shadow: 0 0 4px var(--warning); }
 .dot.red    { background-color: var(--danger);  box-shadow: 0 0 4px var(--danger); }
 
 .cluster-summary-box {
-    margin-top: 16px;
+    margin-top: 14px;
     padding: 11px 14px;
     border-radius: 8px;
     font-size: 12px;
@@ -654,16 +693,64 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     color: var(--text-muted);
     background: var(--bg-card-alt);
 }
+.cluster-summary-box.warning { border-color: var(--warning-border); background: var(--warning-bg); color: var(--warning); }
 
-.cluster-summary-box.warning {
-    border-color: var(--warning-border);
-    background: var(--warning-bg);
-    color: var(--warning);
+/* Abonnement alertes */
+.subscribe-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 13px 16px;
+    border-radius: 10px;
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border-color);
 }
 
+.subscribe-icon { font-size: 18px; flex-shrink: 0; }
+
+.subscribe-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.subscribe-title { font-size: 12.5px; font-weight: 700; }
+.subscribe-desc  { font-size: 11px; color: var(--text-muted); }
+
+.subscribe-btn {
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: inherit;
+    padding: 6px 14px;
+    border-radius: 7px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    border: 1px solid var(--border-bright);
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+.subscribe-btn:hover { background: var(--accent); color: #fff; }
+
 /* ==========================================================================
-   10. HEATMAP 30 JOURS
+   11. HEATMAP 30 JOURS
    ========================================================================== */
+.heatmap-week-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    padding: 0 2px;
+}
+
+.week-label {
+    font-size: 9.5px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+}
+
 .heatmap-container { width: 100%; }
 
 .heatmap {
@@ -681,11 +768,10 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     position: relative;
 }
 
-.heatmap .cell:hover { transform: scaleY(1.12) scaleX(1.05); opacity: 0.9; z-index: 1; }
-
+.heatmap .cell:hover { transform: scaleY(1.15) scaleX(1.05); z-index: 1; }
 .heatmap .cell.green  { background: var(--success); opacity: 0.7; }
-.heatmap .cell.yellow { background: var(--warning); opacity: 0.8; }
-.heatmap .cell.red    { background: var(--danger);  opacity: 0.8; }
+.heatmap .cell.yellow { background: var(--warning); opacity: 0.85; }
+.heatmap .cell.red    { background: var(--danger);  opacity: 0.85; }
 .heatmap .cell:hover  { opacity: 1 !important; }
 
 .heatmap-legend {
@@ -697,19 +783,185 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     flex-wrap: wrap;
 }
 
-.legend-box {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    display: inline-block;
-}
-
+.legend-box { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
 .legend-box.color-green  { background: var(--success); }
 .legend-box.color-yellow { background: var(--warning); }
 .legend-box.color-red    { background: var(--danger); }
 
+/* Résumé heatmap */
+.heatmap-summary {
+    display: flex;
+    gap: 0;
+    margin-top: 18px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.heatmap-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 12px 8px;
+    background: var(--bg-card-alt);
+    border-right: 1px solid var(--border-color);
+}
+
+.heatmap-stat:last-child { border-right: none; }
+
+.heatmap-stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--success);
+    line-height: 1;
+}
+
+.heatmap-stat-val.warning { color: var(--warning); }
+.heatmap-stat-val.danger  { color: var(--danger); }
+.heatmap-stat-val.accent  { color: var(--accent); }
+
+.heatmap-stat-label {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    font-weight: 500;
+    text-align: center;
+}
+
 /* ==========================================================================
-   11. GRILLE
+   12. INCIDENTS
+   ========================================================================== */
+.incidents-count-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--bg-card-alt);
+    color: var(--text-dim);
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+    align-self: flex-start;
+}
+
+.incidents-list { display: flex; flex-direction: column; gap: 0; }
+
+.incidents-empty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px;
+    background: var(--bg-card-alt);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+.incidents-empty-icon { font-size: 18px; }
+
+.incident-item {
+    display: flex;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+}
+
+.incident-item:last-child { border-bottom: none; padding-bottom: 0; }
+.incident-item:first-child { padding-top: 0; }
+
+.incident-left { display: flex; flex-direction: column; align-items: center; padding-top: 2px; }
+
+.incident-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+}
+
+.incident-dot.warning { background: var(--warning); border-color: var(--warning-border); box-shadow: 0 0 6px rgba(255,149,0,0.4); }
+.incident-dot.danger  { background: var(--danger);  border-color: rgba(255,59,92,0.4);  box-shadow: 0 0 6px rgba(255,59,92,0.4); }
+
+.incident-body { flex: 1; }
+
+.incident-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.incident-title { font-size: 13.5px; font-weight: 700; }
+
+.incident-date {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+}
+
+.incident-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.incident-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.incident-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    color: var(--text-dim);
+    background: var(--bg-card-alt);
+}
+
+.incident-tag.resolved { color: var(--success); background: var(--success-bg); border-color: var(--success-border); }
+.incident-tag.ongoing  { color: var(--warning); background: var(--warning-bg); border-color: var(--warning-border); }
+.incident-tag.duration { color: var(--text-muted); }
+
+/* ==========================================================================
+   13. MAINTENANCE PLANIFIÉE
+   ========================================================================== */
+.maintenance-card { }
+
+.maintenance-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.maintenance-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+.maintenance-empty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+    background: var(--bg-card-alt);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+.maintenance-empty-icon { font-size: 16px; }
+
+/* ==========================================================================
+   14. GRILLE
    ========================================================================== */
 .grid-top {
     display: grid;
@@ -721,7 +973,7 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
 @media (max-width: 960px) { .grid-top { grid-template-columns: 1fr; } }
 
 /* ==========================================================================
-   12. FOOTER
+   15. FOOTER
    ========================================================================== */
 .soget-footer {
     margin-top: 48px;
@@ -733,23 +985,11 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     gap: 6px;
 }
 
-.soget-footer p {
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--text-dim);
-}
-
-.soget-footer .soget-sub-legal {
-    font-size: 10.5px;
-    font-weight: 400;
-    max-width: 700px;
-    margin: 0 auto;
-    opacity: 0.7;
-    line-height: 1.5;
-}
+.soget-footer p { font-size: 11.5px; font-weight: 500; color: var(--text-dim); }
+.soget-footer .soget-sub-legal { font-size: 10.5px; max-width: 700px; margin: 0 auto; opacity: 0.7; line-height: 1.5; }
 
 /* ==========================================================================
-   13. RESPONSIVE MOBILE
+   16. RESPONSIVE MOBILE
    ========================================================================== */
 @media (max-width: 640px) {
     .container { padding: 0 16px; }
@@ -761,4 +1001,8 @@ body:not(.light-mode) .brand-logo { mix-blend-mode: screen; }
     .theme-label { display: none; }
     .card-header { flex-direction: column; align-items: flex-start; }
     .nav-container { padding: 0 16px; }
+    .ticker-inner { padding: 0 16px; }
+    .heatmap-summary { flex-wrap: wrap; }
+    .heatmap-stat { min-width: 45%; }
+    .incident-meta { flex-direction: column; gap: 4px; }
 }
