@@ -9,8 +9,10 @@
 </head>
 <body class="light-mode">
 
+<!-- BARRE DE NAVIGATION ÉPURÉE & MODERNE -->
 <nav class="xone-navbar">
     <div class="nav-container">
+        <!-- Logo intégré avec gestion du rectangle blanc -->
         <div class="xone-brand">
             <img src="téléchargement.png" alt="Logo S)ONE" class="brand-logo">
         </div>
@@ -19,7 +21,6 @@
                 Mode Sombre / Clair
             </button>
             <div class="nav-links">
-                <a href="#" class="nav-item active">Disponibilité</a>
                 <a href="https://soget.lightning.force.com/lightning/page/home" target="_blank" class="nav-item contact-link">Contactez-nous</a>
             </div>
         </div>
@@ -28,12 +29,14 @@
 
 <div class="container">
 
+    <!-- EN-TÊTE SIMPLIFIÉ -->
     <header class="header">
         <h1>Statut Opérationnel S)ONE</h1>
         <p class="sub">Suivi technique en temps réel de l'infrastructure, des flux EDI et des interconnexions douanières.</p>
         <p class="timezone-indicator">🕒 Fuseau horaire : Europe/Paris (UTC+2)</p>
     </header>
 
+    <!-- BANNIÈRE DE STATUT LIVE -->
     <div id="statusBanner" class="status status-ok">
         <div class="status-content">
             <div class="pulse-wrapper">
@@ -43,8 +46,10 @@
         </div>
     </div>
 
+    <!-- GRILLE TECHNIQUE PRINCIPALE -->
     <div class="grid-top">
 
+        <!-- PANNEAU DES GRAPHES EN TEMPS RÉEL -->
         <div class="card performance-card">
             <div class="card-header">
                 <span class="graph-title">Performances & Métriques Live</span>
@@ -77,6 +82,7 @@
             </div>
         </div>
 
+        <!-- COMPOSANTS CLUSTER INFRASTRUCTURES -->
         <div class="card components-card">
             <div class="card-header-simple">
                 <h2>État des composants S)ONE</h2>
@@ -124,6 +130,7 @@
 
     </div>
 
+    <!-- HEATMAP TECHNIQUE GLOBALE -->
     <div class="card section-spacing">
         <div class="card-header">
             <span class="graph-title">Indice d'Uptime quotidien (30 derniers jours)</span>
@@ -140,6 +147,7 @@
         </div>
     </div>
 
+    <!-- ZONE MENTIONS LÉGALES -->
     <footer class="soget-footer">
         <p>© 2026 SOGET. Tous droits réservés. S)ONE est une solution logicielle développée par SOGET.</p>
         <p class="soget-sub-legal">Les informations de disponibilité et de performance affichées sur ce hub sont fournies à titre indicatif et issues de nos systèmes de monitoring interne.</p>
@@ -148,7 +156,6 @@
 </div>
 
 <script>
-/* 1. GESTION DU MODE SOMBRE / CLAIR */
 const themeToggle = document.getElementById('themeToggle');
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
@@ -156,7 +163,6 @@ themeToggle.addEventListener('click', () => {
     updateChartsTheme();
 });
 
-/* 2. GENERATION DYNAMIQUE DES HORAIRES ET JOURS */
 function generateDynamicLabels() {
     const hours = [];
     const days = [];
@@ -204,7 +210,6 @@ const datasets = {
     }
 };
 
-/* 3. CONFIGURATION DES GRAPHES CHART.JS */
 const ctxLatency = document.getElementById('latencyChart').getContext('2d');
 const ctxUptime = document.getElementById('uptimeChart').getContext('2d');
 const ctxApiDouane = document.getElementById('apiDouaneChart').getContext('2d');
@@ -262,7 +267,6 @@ let apiDouaneChart = new Chart(ctxApiDouane, {
     options: { ...baseOptions, scales: { x: { grid: { display: false } }, y: { min: 0, max: 500, grid: { color: 'rgba(0, 0, 0, 0.04)' } } } }
 });
 
-/* 4. NAVIGATION ONGLETS */
 function changeTimeframe(timeframe) {
     currentView = timeframe;
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -312,7 +316,6 @@ function updateChartsTheme() {
 }
 updateChartsTheme();
 
-/* 5. INITIALISATION DES FRISES D'UPTIME COMPOSANTS */
 function buildMiniUptimeLine(elementId) {
     const container = document.getElementById(elementId);
     container.innerHTML = '';
@@ -345,11 +348,8 @@ function recalculateComponentUptime(lineId, pctId) {
 recalculateComponentUptime('node1Line', 'node1Pct');
 recalculateComponentUptime('node3Line', 'node3Pct');
 
-
-/* 6. MOTEUR DE SIMULATION DYNAMIQUE CLEANED */
 setInterval(() => {
     const rand = Math.random();
-    
     const banner = document.getElementById('statusBanner');
     const bannerText = document.getElementById('statusBannerText');
     const node1 = document.getElementById('node1');
