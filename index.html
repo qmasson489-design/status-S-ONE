@@ -27,6 +27,16 @@
     </div>
 </nav>
 
+<!-- TICKER INCIDENTS -->
+<div class="incident-ticker" id="incidentTicker" role="status" aria-live="polite">
+    <div class="ticker-inner">
+        <span class="ticker-badge ok">✅ Aucun incident</span>
+        <div class="ticker-track">
+            <span class="ticker-text" id="tickerText">Aucun incident signalé ces 30 derniers jours · Tous les services opérationnels · Prochain créneau de maintenance : aucun planifié</span>
+        </div>
+    </div>
+</div>
+
 <div class="container">
 
     <!-- EN-TÊTE -->
@@ -49,24 +59,37 @@
 
     <!-- KPI ROW -->
     <div class="kpi-row" aria-label="Indicateurs clés">
-        <div class="kpi-card">
-            <span class="kpi-icon">⚡</span>
+
+        <div class="kpi-card" id="kpiCardLatency">
+            <div class="kpi-top">
+                <span class="kpi-icon">⚡</span>
+                <span class="kpi-trend" id="kpiTrendLatency"></span>
+            </div>
             <span class="kpi-value" id="kpiLatency">–</span>
             <span class="kpi-label">Temps de réponse S)ONE</span>
             <span class="kpi-hint">En dessous de 200 ms = excellent</span>
         </div>
-        <div class="kpi-card">
-            <span class="kpi-icon">📶</span>
+
+        <div class="kpi-card" id="kpiCardUptime">
+            <div class="kpi-top">
+                <span class="kpi-icon">📶</span>
+                <span class="kpi-trend" id="kpiTrendUptime"></span>
+            </div>
             <span class="kpi-value" id="kpiUptime">–</span>
             <span class="kpi-label">Disponibilité aujourd'hui</span>
             <span class="kpi-hint">100 % = aucune coupure détectée</span>
         </div>
-        <div class="kpi-card">
-            <span class="kpi-icon">🛃</span>
+
+        <div class="kpi-card" id="kpiCardApi">
+            <div class="kpi-top">
+                <span class="kpi-icon">🛃</span>
+                <span class="kpi-trend" id="kpiTrendApi"></span>
+            </div>
             <span class="kpi-value" id="kpiApi">–</span>
             <span class="kpi-label">Temps de réponse Douane</span>
             <span class="kpi-hint">Dépend des serveurs des Douanes françaises</span>
         </div>
+
     </div>
 
     <!-- GRILLE PRINCIPALE -->
@@ -161,11 +184,21 @@
             <div id="clusterState" class="cluster-summary-box ok" aria-live="polite">
                 Tous les services répondent normalement
             </div>
+
+            <!-- ABONNEMENT ALERTES -->
+            <div class="subscribe-box">
+                <div class="subscribe-icon">🔔</div>
+                <div class="subscribe-text">
+                    <span class="subscribe-title">Recevoir les alertes</span>
+                    <span class="subscribe-desc">Soyez notifié en cas de panne ou de ralentissement</span>
+                </div>
+                <a href="https://soget.lightning.force.com/lightning/page/home" target="_blank" rel="noopener" class="subscribe-btn">S'abonner</a>
+            </div>
         </div>
 
     </div>
 
-    <!-- HEATMAP -->
+    <!-- HEATMAP 30 JOURS -->
     <div class="card section-spacing">
         <div class="card-header">
             <div>
@@ -178,8 +211,62 @@
                 <span class="legend-box color-green"></span><span>Normal</span>
             </div>
         </div>
+
+        <!-- Labels semaines -->
+        <div class="heatmap-week-labels" id="heatmapWeekLabels"></div>
+
         <div class="heatmap-container">
             <div class="heatmap" id="globalHeatmap" role="list" aria-label="Historique 30 jours"></div>
+        </div>
+
+        <!-- Résumé chiffré heatmap -->
+        <div class="heatmap-summary">
+            <div class="heatmap-stat">
+                <span class="heatmap-stat-val" id="hmDaysOk">–</span>
+                <span class="heatmap-stat-label">jours normaux</span>
+            </div>
+            <div class="heatmap-stat">
+                <span class="heatmap-stat-val warning" id="hmDaysWarn">–</span>
+                <span class="heatmap-stat-label">jours dégradés</span>
+            </div>
+            <div class="heatmap-stat">
+                <span class="heatmap-stat-val danger" id="hmDaysDown">–</span>
+                <span class="heatmap-stat-label">jours en panne</span>
+            </div>
+            <div class="heatmap-stat">
+                <span class="heatmap-stat-val accent" id="hmAvgUptime">–</span>
+                <span class="heatmap-stat-label">disponibilité moyenne</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION INCIDENTS -->
+    <div class="card section-spacing">
+        <div class="card-header">
+            <div>
+                <span class="graph-title">Historique des incidents</span>
+                <p class="section-desc">Les 30 derniers jours — du plus récent au plus ancien</p>
+            </div>
+            <span class="incidents-count-badge" id="incidentsBadge">0 incident</span>
+        </div>
+
+        <div id="incidentsList" class="incidents-list">
+            <!-- Rempli par JS -->
+        </div>
+    </div>
+
+    <!-- MAINTENANCE PLANIFIÉE -->
+    <div class="card section-spacing maintenance-card">
+        <div class="maintenance-header">
+            <span class="maintenance-icon">🔧</span>
+            <div>
+                <span class="graph-title">Maintenance planifiée</span>
+                <p class="section-desc">Les interventions programmées à venir</p>
+            </div>
+        </div>
+        <div class="maintenance-empty">
+            <span class="maintenance-empty-icon">✅</span>
+            <span>Aucune maintenance planifiée pour le moment</span>
         </div>
     </div>
 
@@ -196,7 +283,6 @@ const themeToggle = document.getElementById('themeToggle');
 const themeLabel  = themeToggle.querySelector('.theme-label');
 const themeIcon   = themeToggle.querySelector('.theme-icon');
 
-// Démarrer en mode sombre
 document.body.classList.remove('light-mode');
 
 themeToggle.addEventListener('click', () => {
@@ -211,8 +297,7 @@ themeToggle.addEventListener('click', () => {
 function generateDynamicLabels() {
     const now = new Date();
     const dayNames = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-    const hours = [];
-    const days  = [];
+    const hours = [], days = [];
     for (let i = 11; i >= 0; i--) {
         const h = (now.getHours() - i + 24) % 24;
         hours.push(`${String(h).padStart(2,'0')}:00`);
@@ -255,16 +340,31 @@ const datasets = {
     }
 };
 
+// ─── TENDANCES KPI ────────────────────────────────────────────────────────────
+let prevKPI = { lat: null, up: null, api: null };
+
+function renderTrend(elId, current, prev, lowerIsBetter = true) {
+    const el = document.getElementById(elId);
+    if (prev === null) { el.textContent = ''; return; }
+    const diff = current - prev;
+    if (Math.abs(diff) < 0.5) { el.textContent = ''; return; }
+    const pct   = Math.abs((diff / prev) * 100).toFixed(1);
+    const up    = diff > 0;
+    const good  = lowerIsBetter ? !up : up;
+    el.textContent  = `${up ? '▲' : '▼'} ${pct}%`;
+    el.className    = `kpi-trend ${good ? 'trend-good' : 'trend-bad'}`;
+}
+
 // ─── GRAPHIQUES ───────────────────────────────────────────────────────────────
 const isDark = () => !document.body.classList.contains('light-mode');
 
 function getChartColors() {
     const dark = isDark();
     return {
-        tick:   dark ? '#4A6280' : '#7A95C2',
-        grid:   dark ? 'rgba(26,107,255,0.07)' : 'rgba(26,107,255,0.06)',
-        blue:   dark ? '#1A6BFF' : '#1A6BFF',
-        orange: dark ? '#FF9500' : '#D07000',
+        tick:       dark ? '#4A6280' : '#7A95C2',
+        grid:       dark ? 'rgba(26,107,255,0.07)' : 'rgba(26,107,255,0.06)',
+        blue:       '#1A6BFF',
+        orange:     dark ? '#FF9500' : '#D07000',
         blueFill:   dark ? 'rgba(26,107,255,0.08)' : 'rgba(26,107,255,0.05)',
         orangeFill: dark ? 'rgba(255,149,0,0.08)'  : 'rgba(208,112,0,0.05)',
     };
@@ -289,11 +389,7 @@ const ctxU = document.getElementById('uptimeChart').getContext('2d');
 const ctxA = document.getElementById('apiDouaneChart').getContext('2d');
 
 function makeDataset(data, color, fillColor) {
-    return {
-        data, borderColor: color, borderWidth: 2,
-        pointRadius: 2.5, pointBackgroundColor: color,
-        backgroundColor: fillColor, fill: true, tension: 0.4
-    };
+    return { data, borderColor: color, borderWidth: 2, pointRadius: 2.5, pointBackgroundColor: color, backgroundColor: fillColor, fill: true, tension: 0.4 };
 }
 
 let latencyChart = new Chart(ctxL, {
@@ -301,13 +397,11 @@ let latencyChart = new Chart(ctxL, {
     data: { labels: datasets.hour.labels, datasets: [makeDataset(datasets.hour.latency, '#1A6BFF', 'rgba(26,107,255,0.08)')] },
     options: baseOpts({ min: 0, max: 300, ticks: { callback: v => v + ' ms', color: getChartColors().tick, font: { size: 10, family: "'JetBrains Mono', monospace" } } })
 });
-
 let uptimeChart = new Chart(ctxU, {
     type: 'line',
     data: { labels: datasets.hour.labels, datasets: [makeDataset(datasets.hour.uptime, '#1A6BFF', 'rgba(26,107,255,0.08)')] },
     options: baseOpts({ min: 99.5, max: 100, ticks: { callback: v => v + '%', color: getChartColors().tick, font: { size: 10, family: "'JetBrains Mono', monospace" } } })
 });
-
 let apiDouaneChart = new Chart(ctxA, {
     type: 'line',
     data: { labels: datasets.hour.labels, datasets: [makeDataset(datasets.hour.apiDouane, '#FF9500', 'rgba(255,149,0,0.08)')] },
@@ -333,9 +427,9 @@ function updateChartsTheme() {
         chart.options.scales.y.grid.color  = c.grid;
     });
     [latencyChart, uptimeChart].forEach(chart => {
-        chart.data.datasets[0].borderColor        = c.blue;
+        chart.data.datasets[0].borderColor         = c.blue;
         chart.data.datasets[0].pointBackgroundColor = c.blue;
-        chart.data.datasets[0].backgroundColor    = c.blueFill;
+        chart.data.datasets[0].backgroundColor     = c.blueFill;
     });
     apiDouaneChart.data.datasets[0].borderColor         = c.orange;
     apiDouaneChart.data.datasets[0].pointBackgroundColor = c.orange;
@@ -356,17 +450,98 @@ function buildMiniUptimeLine(id) {
 buildMiniUptimeLine('node1Line');
 buildMiniUptimeLine('node3Line');
 
-// ─── HEATMAP ─────────────────────────────────────────────────────────────────
+// ─── HEATMAP 30 JOURS + LABELS SEMAINES ──────────────────────────────────────
+const heatmapData = []; // { date, status: 'green'|'yellow'|'red' }
 const heatmap = document.getElementById('globalHeatmap');
+const weekLabels = document.getElementById('heatmapWeekLabels');
+
+let daysOk = 0, daysWarn = 0, daysDown = 0;
+
 for (let i = 29; i >= 0; i--) {
-    const cell = document.createElement('div');
-    cell.className = 'cell green';
-    cell.setAttribute('role', 'listitem');
     const d = new Date(); d.setDate(d.getDate() - i);
+    // Simulation : 1 jour dégradé il y a 12 jours, tout le reste vert
+    let status = 'green';
+    if (i === 12) status = 'yellow';
+    heatmapData.push({ date: d, status });
+    if (status === 'green') daysOk++;
+    else if (status === 'yellow') daysWarn++;
+    else daysDown++;
+
+    const cell = document.createElement('div');
+    cell.className = `cell ${status}`;
+    cell.setAttribute('role', 'listitem');
     const label = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
-    cell.setAttribute('title', `${label} — Disponibilité normale`);
-    cell.setAttribute('aria-label', `${label} : opérationnel`);
+    const statusLabel = status === 'green' ? 'Disponibilité normale' : status === 'yellow' ? 'Légèrement dégradé' : 'Panne détectée';
+    cell.setAttribute('title', `${label} — ${statusLabel}`);
+    cell.setAttribute('aria-label', `${label} : ${statusLabel}`);
     heatmap.appendChild(cell);
+}
+
+// Labels semaines
+const weekNames = [];
+for (let i = 29; i >= 0; i -= 7) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    weekNames.push(d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }));
+}
+weekNames.forEach(w => {
+    const span = document.createElement('span');
+    span.className = 'week-label';
+    span.textContent = w;
+    weekLabels.appendChild(span);
+});
+
+// Résumé heatmap
+document.getElementById('hmDaysOk').textContent   = daysOk;
+document.getElementById('hmDaysWarn').textContent  = daysWarn;
+document.getElementById('hmDaysDown').textContent  = daysDown;
+const avgUp = (((daysOk + daysWarn * 0.95) / 30) * 100).toFixed(1);
+document.getElementById('hmAvgUptime').textContent = avgUp + ' %';
+
+// ─── SECTION INCIDENTS ────────────────────────────────────────────────────────
+const incidents = [
+    // Simulation : 1 incident il y a 12 jours
+    {
+        date: (() => { const d = new Date(); d.setDate(d.getDate() - 12); return d; })(),
+        title: 'Ralentissement de l\'API Douane',
+        description: 'L\'API des Douanes françaises a répondu plus lentement que d\'habitude pendant environ 45 minutes. S)ONE n\'a pas été interrompu.',
+        status: 'warning',
+        duration: '45 min',
+        resolved: true
+    }
+];
+
+const incidentsList = document.getElementById('incidentsList');
+const badge = document.getElementById('incidentsBadge');
+badge.textContent = incidents.length === 0 ? '0 incident' : `${incidents.length} incident${incidents.length > 1 ? 's' : ''}`;
+
+if (incidents.length === 0) {
+    incidentsList.innerHTML = `
+        <div class="incidents-empty">
+            <span class="incidents-empty-icon">✅</span>
+            <span>Aucun incident ces 30 derniers jours. Tout s'est déroulé normalement.</span>
+        </div>`;
+} else {
+    incidents.forEach(inc => {
+        const dateStr = inc.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        const el = document.createElement('div');
+        el.className = `incident-item ${inc.status}`;
+        el.innerHTML = `
+            <div class="incident-left">
+                <span class="incident-dot ${inc.status}"></span>
+            </div>
+            <div class="incident-body">
+                <div class="incident-meta">
+                    <span class="incident-title">${inc.title}</span>
+                    <span class="incident-date">${dateStr}</span>
+                </div>
+                <p class="incident-desc">${inc.description}</p>
+                <div class="incident-tags">
+                    <span class="incident-tag duration">⏱ Durée : ${inc.duration}</span>
+                    ${inc.resolved ? '<span class="incident-tag resolved">✅ Résolu</span>' : '<span class="incident-tag ongoing">🔄 En cours</span>'}
+                </div>
+            </div>`;
+        incidentsList.appendChild(el);
+    });
 }
 
 // ─── UPTIME CALC ─────────────────────────────────────────────────────────────
@@ -380,6 +555,11 @@ function recalcUptime(lineId, pctId) {
 
 // ─── KPI & TIMESTAMP ─────────────────────────────────────────────────────────
 function updateKPIs(lat, up, api) {
+    renderTrend('kpiTrendLatency', lat, prevKPI.lat, true);
+    renderTrend('kpiTrendUptime',  up,  prevKPI.up,  false);
+    renderTrend('kpiTrendApi',     api, prevKPI.api,  true);
+    prevKPI = { lat, up, api };
+
     document.getElementById('kpiLatency').textContent = lat + ' ms';
     document.getElementById('kpiUptime').textContent  = up.toFixed(2) + ' %';
     document.getElementById('kpiApi').textContent     = api + ' ms';
@@ -401,14 +581,32 @@ function injectSegment(lineId, color) {
     }
 }
 
+// ─── TICKER ──────────────────────────────────────────────────────────────────
+function updateTicker(isWarning) {
+    const ticker = document.getElementById('incidentTicker');
+    const badge  = ticker.querySelector('.ticker-badge');
+    const text   = document.getElementById('tickerText');
+    if (isWarning) {
+        ticker.className = 'incident-ticker warning';
+        badge.className  = 'ticker-badge warning';
+        badge.textContent = '⚠️ Alerte';
+        text.textContent  = 'Ralentissement détecté sur l\'API des Douanes françaises · S)ONE reste opérationnel · Nos équipes sont informées';
+    } else {
+        ticker.className = 'incident-ticker';
+        badge.className  = 'ticker-badge ok';
+        badge.textContent = '✅ Aucun incident';
+        text.textContent  = 'Aucun incident signalé ces 30 derniers jours · Tous les services opérationnels · Prochain créneau de maintenance : aucun planifié';
+    }
+}
+
 // ─── BOUCLE LIVE ─────────────────────────────────────────────────────────────
 const liveInterval = setInterval(() => {
     const rand = Math.random();
-    const banner      = document.getElementById('statusBanner');
-    const bannerText  = document.getElementById('statusBannerText');
-    const node1       = document.getElementById('node1');
-    const node3       = document.getElementById('node3');
-    const clusterBox  = document.getElementById('clusterState');
+    const banner     = document.getElementById('statusBanner');
+    const bannerText = document.getElementById('statusBannerText');
+    const node1      = document.getElementById('node1');
+    const node3      = document.getElementById('node3');
+    const clusterBox = document.getElementById('clusterState');
 
     banner.className      = 'status status-ok';
     bannerText.textContent = '✅ Tout fonctionne normalement';
@@ -420,8 +618,10 @@ const liveInterval = setInterval(() => {
     let liveL = Math.floor(Math.random() * 20 + 95);
     let liveU = parseFloat((100 - Math.random() * 0.02).toFixed(3));
     let liveA = Math.floor(Math.random() * 25 + 135);
+    let isWarn = false;
 
     if (rand > 0.85) {
+        isWarn = true;
         banner.className       = 'status status-warning';
         bannerText.textContent  = '⚠️ Ralentissement détecté sur l\'API des Douanes';
         node3.className        = 'status-pill warning'; node3.textContent = 'Ralenti';
@@ -436,6 +636,7 @@ const liveInterval = setInterval(() => {
         if (Math.random() > 0.5) injectSegment('node3Line', 'green');
     }
 
+    updateTicker(isWarn);
     recalcUptime('node1Line', 'node1Pct');
     recalcUptime('node3Line', 'node3Pct');
     updateKPIs(liveL, liveU, liveA);
